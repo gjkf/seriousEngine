@@ -1,5 +1,5 @@
-/**
- * Created by Davide Cossu (gjkf), 6/13/2016
+/*
+  Created by Davide Cossu (gjkf), 6/13/2016
  */
 package com.gjkf.seriousEngine.core.gui;
 

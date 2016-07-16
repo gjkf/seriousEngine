@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/******************************************************************************
+ Copyright 2011 See AUTHORS file.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 package com.gjkf.seriousEngine;
 
@@ -63,7 +63,7 @@ public class SharedLibraryLoader{
 	static {
 		// Don't extract natives if using JWS.
 		try {
-			Method method = Class.forName("javax.jnlp.ServiceManager").getDeclaredMethod("lookup", new Class[] {String.class});
+			Method method = Class.forName("javax.jnlp.ServiceManager").getDeclaredMethod("lookup", String.class);
 			method.invoke(null, "javax.jnlp.PersistenceService");
 			load = false;
 		} catch (Throwable ex) {
@@ -102,7 +102,7 @@ public class SharedLibraryLoader{
 		load = false;
 	}
 
-	static private final HashSet<String> loadedLibraries = new HashSet<String>();
+	static private final HashSet<String> loadedLibraries = new HashSet<>();
 
 	private String nativesJar;
 
@@ -130,7 +130,7 @@ public class SharedLibraryLoader{
 			if(input != null) {
 				try {
 					input.close();
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 			}
 		}
@@ -186,7 +186,7 @@ public class SharedLibraryLoader{
 			if(file != null) {
 				try {
 					file.close();
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 			}
 		}
@@ -255,9 +255,8 @@ public class SharedLibraryLoader{
 		}
 		try {
 			new FileOutputStream(testFile).close();
-			if (!canExecute(testFile)) return false;
-			return true;
-		} catch (Throwable ex) {
+            return canExecute(testFile);
+        } catch (Throwable ex) {
 			return false;
 		} finally {
 			testFile.delete();

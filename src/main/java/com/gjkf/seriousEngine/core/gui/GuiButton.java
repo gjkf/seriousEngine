@@ -1,5 +1,5 @@
-/**
- * Created by Davide Cossu (gjkf), 6/10/2016
+/*
+  Created by Davide Cossu (gjkf), 6/10/2016
  */
 package com.gjkf.seriousEngine.core.gui;
 
@@ -39,13 +39,4 @@ public class GuiButton extends GuiWidget{
 		Renderer.renderFont(x, y+height/4, Colors.WHITE.color, this.scale, this.text);
 	}
 
-	@Override
-	public void update(){
-		super.update();
-	}
-
-	@Override
-	public void mouseClicked(){
-		super.mouseClicked();
-	}
 }

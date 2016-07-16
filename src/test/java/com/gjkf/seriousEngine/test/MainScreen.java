@@ -1,7 +1,7 @@
 package com.gjkf.seriousEngine.test;
 
-/**
- * Created by Davide Cossu (gjkf), 7/10/2016
+/*
+  Created by Davide Cossu (gjkf), 7/10/2016
  */
 
 import com.gjkf.seriousEngine.core.gui.Colors;
@@ -19,12 +19,8 @@ public class MainScreen extends GuiScreenWidget{
 				new Point2i(200, 100),
 				new Point2i(140, 200),
 				new Point2i(500, 400)
-		}, Colors.WHITE.color, () -> {
-			System.out.println("TEST!");
-		}));
-		add(new Rectangle(100, 20, 50, 50, Colors.BLUE.color, () -> {
-			System.err.println("Test1");
-		}));
+		}, Colors.WHITE.color, () -> System.out.println("TEST!")));
+		add(new Rectangle(100, 20, 50, 50, Colors.BLUE.color, () -> System.err.println("Test1")));
 	}
 
 	@Override

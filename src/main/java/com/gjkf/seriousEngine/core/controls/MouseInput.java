@@ -1,5 +1,5 @@
-/**
- * Created by Davide Cossu (gjkf), 6/12/2016
+/*
+  Created by Davide Cossu (gjkf), 6/12/2016
  */
 package com.gjkf.seriousEngine.core.controls;
 
@@ -25,8 +25,8 @@ public class MouseInput{
 
 	public static double getMouseX(){
 		DoubleBuffer xpos = BufferUtils.createDoubleBuffer(1);
-		glfwGetCursorPos(SeriousEngine.window.window, xpos, null);;
-		return xpos.get();
+		glfwGetCursorPos(SeriousEngine.window.window, xpos, null);
+        return xpos.get();
 	}
 
 	/**
@@ -37,8 +37,8 @@ public class MouseInput{
 
 	public static double getMouseY(){
 		DoubleBuffer ypos = BufferUtils.createDoubleBuffer(1);
-		glfwGetCursorPos(SeriousEngine.window.window, null, ypos);;
-		return ypos.get();
+		glfwGetCursorPos(SeriousEngine.window.window, null, ypos);
+        return ypos.get();
 	}
 
 	/**

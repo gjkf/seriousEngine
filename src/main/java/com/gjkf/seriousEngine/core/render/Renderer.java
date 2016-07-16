@@ -1,5 +1,5 @@
-/**
- * Created by Davide Cossu (gjkf), 6/11/2016
+/*
+  Created by Davide Cossu (gjkf), 6/11/2016
  */
 package com.gjkf.seriousEngine.core.render;
 

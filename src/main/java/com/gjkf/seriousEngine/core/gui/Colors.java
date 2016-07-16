@@ -1,5 +1,5 @@
-/**
- * Created by Davide Cossu (gjkf), 7/9/2016
+/*
+  Created by Davide Cossu (gjkf), 7/9/2016
  */
 package com.gjkf.seriousEngine.core.gui;
 
@@ -13,7 +13,7 @@ public enum Colors{
 	GREEN(new Color3f(0f, 1f, 0f)),
 	BLUE(new Color3f(0f, 0f, 1f));
 
-	public Color3f color;
+	public final Color3f color;
 
 	Colors(Color3f color3f){
 		this.color = color3f;
