@@ -11,8 +11,10 @@ public class TestMain{
 
 	public static void main(String... args){
 		SeriousEngine engine = new SeriousEngine();
+
 		Window w = new Window(1000, 1000, "Test window");
 		w.setScreen(new MainScreen(1000, 1000));
+
 		engine.setWindow(w);
 		engine.run();
 	}

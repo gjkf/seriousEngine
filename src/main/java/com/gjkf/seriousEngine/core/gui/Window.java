@@ -77,15 +77,18 @@ public class Window{
 		if ( glfwInit() != GL11.GL_TRUE )
 			throw new IllegalStateException("Unable to initialize GLFW");
 
-		// Configure our window
+		// Configure our window, uses OpenGL 3.2
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
+//		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+//		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be not resizable
 
 		// Create the window
 		window = glfwCreateWindow(width, height, name, NULL, NULL);
 		if ( window == NULL )
-			throw new RuntimeException("Failed to create the GLFW window");
+			throw new RuntimeException("Failed to create the GLFW window, probably your graphics card does not support OpenGL 3.2");
 
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);

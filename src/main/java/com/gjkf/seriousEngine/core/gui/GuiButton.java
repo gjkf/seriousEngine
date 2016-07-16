@@ -4,6 +4,7 @@
 package com.gjkf.seriousEngine.core.gui;
 
 import com.gjkf.seriousEngine.core.controls.MouseInput;
+import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Renderer;
 import org.lwjgl.stb.STBEasyFont;
 

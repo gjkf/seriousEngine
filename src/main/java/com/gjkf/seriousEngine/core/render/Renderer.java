@@ -10,8 +10,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBEasyFont.stb_easy_font_print;
 
@@ -120,5 +119,50 @@ public class Renderer{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDeleteBuffers(vboID);
 	}
+
+    /**
+     *  Loads and runs the shader
+     *
+     *  @param vertexSource      Path to the vertex shader
+     *  @param fragmentSource    Path to the fragment shader
+     *
+     *  @throws RuntimeException If the shader is not compiled or the program crashes
+     */
+
+	public static void useShader(String vertexSource, String fragmentSource, Runnable things){
+        int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, vertexSource);
+        glCompileShader(vertexShader);
+
+        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, fragmentSource);
+        glCompileShader(fragmentShader);
+
+        if (glGetShaderi(vertexShader, GL_COMPILE_STATUS) != GL_TRUE) {
+            throw new RuntimeException(glGetShaderInfoLog(vertexShader));
+        }
+
+        if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) != GL_TRUE) {
+            throw new RuntimeException(glGetShaderInfoLog(fragmentShader));
+        }
+
+        int shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glBindFragDataLocation(shaderProgram, 0, "fragColor");
+        glLinkProgram(shaderProgram);
+
+        if (glGetProgrami(shaderProgram, GL_LINK_STATUS) != GL_TRUE) {
+            throw new RuntimeException(glGetProgramInfoLog(shaderProgram));
+        }
+
+        glUseProgram(shaderProgram);
+
+        things.run();
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+        glDeleteProgram(shaderProgram);
+    }
 
 }
