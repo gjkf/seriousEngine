@@ -1,9 +1,9 @@
-#version 150 core
+#version 400 core
 
-in vec3 vertexColor;
+smooth in vec4 theColor;
 
-out vec4 fragColor;
+out vec4 outputColor;
 
-void main() {
-    fragColor = vec4(vertexColor, 1.0);
+void main(){
+    outputColor = theColor;
 }

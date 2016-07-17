@@ -5,6 +5,9 @@ package com.gjkf.seriousEngine.core.render;
 
 import org.lwjgl.BufferUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -35,10 +38,10 @@ public class Renderer{
 	 */
 
 	public static void renderFont(float x, float y, Color3f color, float scale, String text){
-		ByteBuffer charBuffer = BufferUtils.createByteBuffer(text.length() * 270);
-		int quads = stb_easy_font_print(0, 0, text, null, charBuffer);
+        glPushMatrix();
 
-		glPushMatrix();
+	    ByteBuffer charBuffer = BufferUtils.createByteBuffer(text.length() * 270);
+		int quads = stb_easy_font_print(0, 0, text, null, charBuffer);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 16, charBuffer);
@@ -98,6 +101,7 @@ public class Renderer{
 	 */
 
 	public static void drawArray(float [] vertices, Color3f color, int mode){
+	    glPushMatrix();
 		int vaoID= glGenVertexArrays();
 		glBindVertexArray(vaoID);
 
@@ -118,51 +122,100 @@ public class Renderer{
 		glDeleteVertexArrays(vaoID);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDeleteBuffers(vboID);
+        glPopMatrix();
 	}
 
     /**
      *  Loads and runs the shader
      *
-     *  @param vertexSource      Path to the vertex shader
-     *  @param fragmentSource    Path to the fragment shader
-     *
-     *  @throws RuntimeException If the shader is not compiled or the program crashes
+     *  @param vertPath Path to the vertex shader
+     *  @param fragPath Path to the fragment shader
+     *  @param runnable The things that should be affected by the shader
      */
 
-	public static void useShader(String vertexSource, String fragmentSource, Runnable things){
-        int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, vertexSource);
-        glCompileShader(vertexShader);
+	public static void loadShader(String vertPath, String fragPath, Runnable runnable){
+		// These lines of code first take in the file path
+		// for both our vertex shader and our fragment shader
+		// and then create a string containing all
+		// of the source code of both shaders and put them
+		// into vert and frag. These will later be passed into
+		// our created shader objects in our create() function
+		String vert = loadAsString(vertPath);
+		String frag = loadAsString(fragPath);
 
-        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, fragmentSource);
-        glCompileShader(fragmentShader);
+        // creates a program object and assigns it to the
+        // variable program.
+        int program = glCreateProgram();
+        // glCreateShader specificies the type of shader
+        // that we want created. For the vertex shader
+        // we define it as GL_VERTEX_SHADER
+        int vertID = glCreateShader(GL_VERTEX_SHADER);
+        // Specificies that we want to create a
+        // GL_FRAGMENT_SHADER
+        int fragID = glCreateShader(GL_FRAGMENT_SHADER);
+        // glShaderSource replaces the source code in a shader
+        // object.
+        // We've defined our vertex shader object and now
+        // we want to pass in our vertex shader that we
+        // managed to build as a string in our load
+        // function.
+        //
+        glShaderSource(vertID, vert);
+        // does the same for our fragment shader
+        glShaderSource(fragID, frag);
 
-        if (glGetShaderi(vertexShader, GL_COMPILE_STATUS) != GL_TRUE) {
-            throw new RuntimeException(glGetShaderInfoLog(vertexShader));
+        // This group of code tries to compile our shader object
+        // it then gets the status of that compiled shader and
+        // if it proves to be false then it prints an error to
+        // the command line.
+        glCompileShader(vertID);
+        if(glGetShaderi(vertID, GL_COMPILE_STATUS) == GL_FALSE){
+            System.err.println("Failed to compile vertexd shader!");
+            System.err.println(glGetShaderInfoLog(vertID));
         }
 
-        if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) != GL_TRUE) {
-            throw new RuntimeException(glGetShaderInfoLog(fragmentShader));
+        // This group of code tries to compile our shader object
+        // it then gets the status of that compiled shader and
+        // if it proves to be false then it prints an error to
+        // the command line.
+        glCompileShader(fragID);
+        if(glGetShaderi(fragID, GL_COMPILE_STATUS) == GL_FALSE){
+            System.err.println("Failed to compile fragment shader!");
+            System.err.println(glGetShaderInfoLog(fragID));
         }
 
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glBindFragDataLocation(shaderProgram, 0, "fragColor");
-        glLinkProgram(shaderProgram);
+        // This attaches our vertex and fragment shaders
+        // to the program object
+        glAttachShader(program, vertID);
+        glAttachShader(program, fragID);
+        // this links our program object
+        glLinkProgram(program);
+        //
+        glValidateProgram(program);
 
-        if (glGetProgrami(shaderProgram, GL_LINK_STATUS) != GL_TRUE) {
-            throw new RuntimeException(glGetProgramInfoLog(shaderProgram));
-        }
+		runnable.run();
 
-        glUseProgram(shaderProgram);
+		glDeleteShader(vertID);
+        glDeleteShader(fragID);
+        glDeleteProgram(program);
+	}
 
-        things.run();
+	private static String loadAsString(String location){
+		StringBuilder result = new StringBuilder();
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader(location));
+			String buffer = "";
+			while((buffer = reader.readLine())!= null){
+				result.append(buffer);
+				result.append("\n");
+			}
+			reader.close();
 
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-        glDeleteProgram(shaderProgram);
-    }
+		} catch(IOException e){
+			e.printStackTrace();
+		}
+		return result.toString();
+	}
+
 
 }

@@ -1,20 +1,17 @@
-#version 150 core
+#version 400 core
 
-// Given the position and  the color...
-
-in vec3 position;
-in vec3 color;
-
-// ... find out then what color should be used
-
-out vec3 vertexColor;
+in vec4 position;
+in vec4 color;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+smooth out vec4 theColor;
+
 void main() {
-    vertexColor = color;
-    mat4 mvp = projection * view * model;
-    gl_Position = mvp * vec4(position, 1.0);
+    //mat4 mvp = projection * view * model;
+    //gl_Position = mvp * vec4(position, 1.0);
+    theColor = color;
+    gl_Position = position;
 }
