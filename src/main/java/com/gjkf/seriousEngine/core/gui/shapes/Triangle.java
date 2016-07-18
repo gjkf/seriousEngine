@@ -6,7 +6,7 @@ package com.gjkf.seriousEngine.core.gui.shapes;
 import com.gjkf.seriousEngine.core.gui.GuiWidget;
 import com.gjkf.seriousEngine.core.gui.MouseListener;
 import com.gjkf.seriousEngine.core.render.Color3f;
-import com.gjkf.seriousEngine.core.render.Renderer;
+import com.gjkf.seriousEngine.core.render.Render;
 import org.lwjgl.opengl.GL11;
 
 public class Triangle extends GuiWidget{
@@ -74,7 +74,7 @@ public class Triangle extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		Renderer.drawArray(new float[]{vertices[0].x, vertices[0].y, vertices[1].x, vertices[1].y, vertices[2].x, vertices[2].y}, color, GL11.GL_TRIANGLES);
+		Render.drawArray(new float[]{vertices[0].x, vertices[0].y, vertices[1].x, vertices[1].y, vertices[2].x, vertices[2].y}, color, GL11.GL_TRIANGLES);
 	}
 
 	@Override

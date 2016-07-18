@@ -29,7 +29,14 @@ public class SeriousEngine{
 
 	public SeriousEngine(){
 		SharedLibraryLoader.load();
-	}
+        String os = System.getProperty("os.name").toLowerCase();
+
+        /* Mac OS X needs headless mode for AWT */
+        if (os.contains("mac")) {
+            System.setProperty("java.awt.headless", "true");
+        }
+
+    }
 
 	/**
 	 * 	Sets the window to the parameter

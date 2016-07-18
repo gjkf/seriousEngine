@@ -6,7 +6,7 @@ package com.gjkf.seriousEngine.core.gui.shapes;
 import com.gjkf.seriousEngine.core.gui.GuiWidget;
 import com.gjkf.seriousEngine.core.gui.MouseListener;
 import com.gjkf.seriousEngine.core.render.Color3f;
-import com.gjkf.seriousEngine.core.render.Renderer;
+import com.gjkf.seriousEngine.core.render.Render;
 
 public class Rectangle extends GuiWidget{
 
@@ -56,7 +56,7 @@ public class Rectangle extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		Renderer.drawRect(x, y, width, height, color);
+		Render.drawRect(x, y, width, height, color);
 	}
 
 }

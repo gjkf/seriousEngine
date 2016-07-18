@@ -30,7 +30,6 @@ public class GuiButton extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		//Renderer.drawRect(x, y, width, height, new Color3f(1f, 0f, 1f));
 		if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
 			Render.drawLine(x-15, y-5, x-5, y+height/2, Colors.WHITE.color);
 			Render.drawLine(x-15, y+height+5, x-5, y+height/2, Colors.WHITE.color);

@@ -9,7 +9,6 @@ import com.gjkf.seriousEngine.core.gui.shapes.Point2i;
 import com.gjkf.seriousEngine.core.gui.shapes.Rectangle;
 import com.gjkf.seriousEngine.core.gui.shapes.Triangle;
 import com.gjkf.seriousEngine.core.render.Colors;
-import com.gjkf.seriousEngine.core.render.Renderer;
 
 public class MainScreen extends GuiScreenWidget{
 
@@ -30,6 +29,5 @@ public class MainScreen extends GuiScreenWidget{
 
 	@Override
 	public void drawForeground(){
-		Renderer.renderFont(350, 350, Colors.RED.color, 4f, "This is some test text");
 	}
 }
