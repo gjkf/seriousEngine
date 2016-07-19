@@ -43,7 +43,7 @@ public class Window{
 	 *	The window name
 	 */
 
-	public String name;
+	private String name;
 
 	/**
 	 * 	The loaded screen
@@ -105,6 +105,7 @@ public class Window{
 
 		// Get the resolution of the primary monitor
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
 		// Center our window
 		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
 

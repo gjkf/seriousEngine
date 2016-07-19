@@ -4,7 +4,7 @@
 package com.gjkf.seriousEngine.core.gui;
 
 import com.gjkf.seriousEngine.core.render.Color3f;
-import com.gjkf.seriousEngine.core.render.Render;
+import com.gjkf.seriousEngine.core.render.Renderer;
 import org.lwjgl.stb.STBEasyFont;
 
 /**
@@ -28,7 +28,7 @@ public class GuiLabel extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		Render.renderFont(x, y, this.color, this.scale, this.text);
+		Renderer.renderFont(x, y, this.color, this.scale, this.text);
 	}
 
 }

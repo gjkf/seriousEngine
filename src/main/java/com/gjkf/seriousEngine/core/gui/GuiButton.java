@@ -5,7 +5,7 @@ package com.gjkf.seriousEngine.core.gui;
 
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.render.Colors;
-import com.gjkf.seriousEngine.core.render.Render;
+import com.gjkf.seriousEngine.core.render.Renderer;
 import org.lwjgl.stb.STBEasyFont;
 
 /**
@@ -31,13 +31,13 @@ public class GuiButton extends GuiWidget{
 	public void draw(){
 		super.draw();
 		if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
-			Render.drawLine(x-15, y-5, x-5, y+height/2, Colors.WHITE.color);
-			Render.drawLine(x-15, y+height+5, x-5, y+height/2, Colors.WHITE.color);
-			Render.drawLine(x+width+15, y-5, x+width+6, y+height/2, Colors.WHITE.color);
-			Render.drawLine(x+width+15, y+height+5, x+width+6, y+height/2, Colors.WHITE.color);
+			Renderer.drawLine(x-15, y-5, x-5, y+height/2, Colors.WHITE.color);
+			Renderer.drawLine(x-15, y+height+5, x-5, y+height/2, Colors.WHITE.color);
+			Renderer.drawLine(x+width+15, y-5, x+width+6, y+height/2, Colors.WHITE.color);
+			Renderer.drawLine(x+width+15, y+height+5, x+width+6, y+height/2, Colors.WHITE.color);
 		}
 
-		Render.renderFont(x, y+height/4, Colors.WHITE.color, this.scale, this.text);
+		Renderer.renderFont(x, y+height/4, Colors.WHITE.color, this.scale, this.text);
 	}
 
 }
