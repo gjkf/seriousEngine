@@ -1,9 +1,23 @@
 group 'com.gjkf'
-version '0.1-SNAPSHOT'
+version '0.1'
 
 apply plugin: 'java'
+apply plugin: 'application'
+
+sourceSets{
+    main {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
 
 project.ext.lwjglVersion = "3.0.0a"
+
+mainClassName = "com.gjkf.seriousEngine.test.TestMain"
 
 repositories {
     mavenCentral()

@@ -21,6 +21,8 @@ public class SeriousEngine{
 	private GLFWMouseButtonCallback mouseButtonCallback;
 	private GLFWKeyCallback keyCallback;
 
+	public static ClassLoader runningDirectory;
+
 	/**
 	 * 	The current window
 	 */
@@ -35,6 +37,8 @@ public class SeriousEngine{
         if (os.contains("mac")) {
             System.setProperty("java.awt.headless", "true");
         }
+
+        runningDirectory = Thread.currentThread().getContextClassLoader();
 
     }
 

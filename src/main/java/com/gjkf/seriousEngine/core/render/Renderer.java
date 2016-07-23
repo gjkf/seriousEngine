@@ -4,9 +4,13 @@
 package com.gjkf.seriousEngine.core.render;
 
 import com.gjkf.seriousEngine.core.math.Matrix4f;
+import com.gjkf.seriousEngine.core.util.FileUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTBakedChar;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,6 +20,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBEasyFont.stb_easy_font_print;
+import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 
 /**
  *	Misc renderer class.
@@ -24,6 +30,8 @@ import static org.lwjgl.stb.STBEasyFont.stb_easy_font_print;
  */
 
 public class Renderer{
+
+    private static String font;
 
     /**
      * 	Renders a {@link org.lwjgl.stb.STBEasyFont} at the given position
@@ -37,7 +45,7 @@ public class Renderer{
      * 	@param text 	The text to display
      */
 
-    public static void renderFont(float x, float y, Color3f color, float scale, String text){
+    public static void renderFont(float x, float y, String text, float scale, Color3f color){
         glPushMatrix();
 
         ByteBuffer charBuffer = BufferUtils.createByteBuffer(text.length() * 270);
@@ -52,6 +60,81 @@ public class Renderer{
         glDrawArrays(GL_QUADS, 0, quads * 4);
 
         glDisableClientState(GL_VERTEX_ARRAY);
+
+        glPopMatrix();
+    }
+
+    /**
+     *  Draws a text with the font specified at {@link #font}
+     *
+     * 	@param x 		The x coordinate
+     * 	@param y 		The y coordinate
+     * 	@param color	The color
+     * 	@param size	    The size
+     * 	@param text 	The text to display
+     */
+
+    public static void drawText(float x, float y, String text, int size, Color3f color){
+        glPushMatrix();
+
+        int BITMAP_W = 512;
+        int BITMAP_H = 512;
+
+        int texID = glGenTextures();
+        ByteBuffer cdata = BufferUtils.createByteBuffer(96 * STBTTBakedChar.SIZEOF);
+
+        try {
+            ByteBuffer ttf = FileUtil.ioResourceToByteBuffer(font, 160 * 1024);
+
+            ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_W * BITMAP_H);
+            stbtt_BakeFontBitmap(ttf, size, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
+
+            glBindTexture(GL_TEXTURE_2D, texID);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, BITMAP_W, BITMAP_H, 0, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        glColor3f(color.r, color.g, color.b); // Text color
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        FloatBuffer xF = BufferUtils.createFloatBuffer(1);
+        FloatBuffer yF = BufferUtils.createFloatBuffer(1);
+        STBTTAlignedQuad q = new STBTTAlignedQuad();
+
+        glPushMatrix();
+        xF.put(0, x);
+        yF.put(0, y);
+        glBegin(GL_QUADS);
+        for ( int i = 0; i < text.length(); i++ ) {
+            char c = text.charAt(i);
+            if ( c == '\n' ) {
+                yF.put(0, yF.get(0) + size);
+                xF.put(0, 0.0f);
+                continue;
+            } else if ( c < 32 || 128 <= c )
+                continue;
+
+            stbtt_GetBakedQuad(cdata, BITMAP_W, BITMAP_H, c - 32, xF, yF, q.buffer(), 1);
+
+            glTexCoord2f(q.getS0(), q.getT0());
+            glVertex2f(q.getX0(), q.getY0());
+
+            glTexCoord2f(q.getS1(), q.getT0());
+            glVertex2f(q.getX1(), q.getY0());
+
+            glTexCoord2f(q.getS1(), q.getT1());
+            glVertex2f(q.getX1(), q.getY1());
+
+            glTexCoord2f(q.getS0(), q.getT1());
+            glVertex2f(q.getX0(), q.getY1());
+        }
+        glEnd();
 
         glPopMatrix();
     }
@@ -193,6 +276,14 @@ public class Renderer{
         program.pointVertexAttribute(colAttrib, 3, 7 * Float.BYTES, 2 * Float.BYTES);
 
         return program;
+    }
+
+    public static String getFont(){
+        return font;
+    }
+
+    public static void setFont(String font){
+        Renderer.font = font;
     }
 
 }

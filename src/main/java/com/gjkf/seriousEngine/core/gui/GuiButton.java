@@ -37,7 +37,7 @@ public class GuiButton extends GuiWidget{
 			Renderer.drawLine(x+width+15, y+height+5, x+width+6, y+height/2, Colors.WHITE.color);
 		}
 
-		Renderer.renderFont(x, y+height/4, Colors.WHITE.color, this.scale, this.text);
+		Renderer.renderFont(x, y+height/4, this.text, this.scale, Colors.WHITE.color);
 	}
 
 }

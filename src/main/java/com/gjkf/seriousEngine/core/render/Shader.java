@@ -3,7 +3,7 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
-import java.io.*;
+import com.gjkf.seriousEngine.core.util.FileUtil;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
@@ -71,21 +71,7 @@ public class Shader {
      * @return Shader from specified file
      */
     public static Shader loadShader(int type, String path) {
-        StringBuilder builder = new StringBuilder();
-
-        try (InputStream in = new FileInputStream(path);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\n");
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException("Failed to load a shader file!"
-                    + System.lineSeparator() + ex.getMessage());
-        }
-
-        CharSequence source = builder.toString();
-        return new Shader(type, source);
+        return new Shader(type, FileUtil.readFile(path));
     }
 
 }
