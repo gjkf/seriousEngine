@@ -137,6 +137,8 @@ public class Renderer{
         glEnd();
 
         glPopMatrix();
+
+        glPopMatrix();
     }
 
     /**
@@ -258,6 +260,7 @@ public class Renderer{
         v.delete();
         f.delete();
         program.delete();
+        glUseProgram(0);
         glPopMatrix();
     }
 
