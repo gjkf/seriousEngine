@@ -3,7 +3,7 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
-import com.gjkf.seriousEngine.core.math.Matrix4f;
+import com.gjkf.seriousEngine.core.math.*;
 import com.gjkf.seriousEngine.core.util.FileUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -14,12 +14,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBEasyFont.stb_easy_font_print;
+import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 
@@ -264,6 +266,74 @@ public class Renderer{
         glPopMatrix();
     }
 
+    public static void loadShader(String vertPath, String fragPath, HashMap<String, Object> map, Runnable runnable){
+        glPushMatrix();
+
+        ShaderProgram program = new ShaderProgram();
+        Shader v = Shader.loadShader(GL_VERTEX_SHADER, vertPath);
+        program.attachShader(v);
+        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, fragPath);
+        program.attachShader(f);
+        program.link();
+        program.use();
+
+        /* Get width and height of framebuffer */
+        long window = GLFW.glfwGetCurrentContext();
+        IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
+        IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        GLFW.glfwGetFramebufferSize(window, widthBuffer, heightBuffer);
+        int width = widthBuffer.get();
+        int height = heightBuffer.get();
+
+        /* Specify Vertex Pointers */
+        program = specifyVertexAttributes(program);
+
+        /* Set model matrix to identity matrix */
+        Matrix4f model = new Matrix4f();
+        int uniModel = program.getUniformLocation("model");
+        program.setUniform(uniModel, model);
+
+        /* Set view matrix to identity matrix */
+        Matrix4f view = new Matrix4f();
+        int uniView = program.getUniformLocation("view");
+        program.setUniform(uniView, view);
+
+        /* Set projection matrix to an orthographic projection */
+        Matrix4f projection = Matrix4f.orthographic(0f, width, height, 0, -1f, 1f);
+        int uniProjection = program.getUniformLocation("projection");
+        program.setUniform(uniProjection, projection);
+
+        ShaderProgram finalProgram = program;
+
+        map.forEach((key, value) -> {
+            int target = finalProgram.getUniformLocation(key);
+            if(value instanceof Matrix2f)
+                finalProgram.setUniform(target, (Matrix2f) value);
+            else if(value instanceof Matrix3f)
+                finalProgram.setUniform(target, (Matrix3f) value);
+            else if(value instanceof Matrix4f)
+                finalProgram.setUniform(target, (Matrix4f) value);
+            else if(value instanceof Vector2f)
+                finalProgram.setUniform(target, (Vector2f) value);
+            else if(value instanceof Vector3f)
+                finalProgram.setUniform(target, (Vector3f) value);
+            else if(value instanceof Vector4f)
+                finalProgram.setUniform(target, (Vector4f) value);
+            else
+                finalProgram.setUniform(target, (int) value);
+        });
+
+        program = finalProgram;
+
+        runnable.run();
+
+        v.delete();
+        f.delete();
+        program.delete();
+        glUseProgram(0);
+        glPopMatrix();
+    }
+
     /**
      * Specifies the vertex pointers.
      */
@@ -279,6 +349,108 @@ public class Renderer{
         program.pointVertexAttribute(colAttrib, 3, 7 * Float.BYTES, 2 * Float.BYTES);
 
         return program;
+    }
+
+    /**
+     *  Renders an image from the given path
+     *
+     *  @param x The x coordinate of where to render the image
+     *  @param y The y coordinate of where to render the image
+     *  @param path The path of the file
+     */
+
+    public static void renderImage(float x, float y, String path){
+        ByteBuffer imageBuffer = null;
+        try{
+            imageBuffer = FileUtil.ioResourceToByteBuffer(FileUtil.loadResource(path), 8 * 1024);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        IntBuffer ww = BufferUtils.createIntBuffer(1);
+        IntBuffer hh = BufferUtils.createIntBuffer(1);
+        IntBuffer comp = BufferUtils.createIntBuffer(1);
+
+        stbi_info_from_memory(imageBuffer, ww, hh, comp);
+
+        renderImage(x, y, ww.get(0), hh.get(0), path);
+    }
+
+    /**
+     *  Renders an image from the given path
+     *
+     *  @param x The x coordinate of where to render the image
+     *  @param y The y coordinate of where to render the image
+     *  @param width The width of the rendered image
+     *  @param height The height of the rendered image
+     *  @param path The path of the file
+     */
+
+    public static void renderImage(float x, float y, float width, float height, String path){
+        glPushMatrix();
+
+        ByteBuffer image;
+        ByteBuffer imageBuffer = null;
+        try{
+            imageBuffer = FileUtil.ioResourceToByteBuffer(FileUtil.loadResource(path), 8 * 1024);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        IntBuffer ww = BufferUtils.createIntBuffer(1);
+        IntBuffer hh = BufferUtils.createIntBuffer(1);
+        IntBuffer comp = BufferUtils.createIntBuffer(1);
+
+        stbi_info_from_memory(imageBuffer, ww, hh, comp);
+
+        image = stbi_load_from_memory(imageBuffer, ww, hh, comp, 0);
+
+        if(image == null)
+            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+
+        int w = ww.get(0);
+        int h = hh.get(0);
+
+        if(comp.get(0) == 3){
+            if ( (w & 3) != 0 )
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w & 1));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        }else{
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glEnable(GL_TEXTURE_2D);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(0.0f, 0.0f);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(width, 0.0f);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(width, height);
+
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(0.0f, height);
+
+        glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+
+        stbi_image_free(image);
+
+        glPopMatrix();
     }
 
     public static String getFont(){
