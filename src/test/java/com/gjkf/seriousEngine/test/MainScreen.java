@@ -46,7 +46,7 @@ public class MainScreen extends GuiScreenWidget{
 //        Renderer.setFont(FileUtil.loadResource("fonts/ASO.ttf")); // Sets the font
 //        Renderer.drawText(500, 500, "This is some sample text with font", 10, Colors.WHITE.color); // Draws text with the font
         Renderer.renderFont(500, 200, "Test", 5f, Colors.BLUE.color); // Draws debug text
-//        Renderer.renderImage(100, 100, "textures/Globe.png");
+        Renderer.renderImage(100, 100, "textures/Globe.png");
 	}
 
 	@Override
