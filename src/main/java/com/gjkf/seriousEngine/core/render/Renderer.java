@@ -214,6 +214,8 @@ public class Renderer{
 
     /**
      *  Loads and runs the shader
+     *  <p>
+     *  YOU DO NEED TO USE THIS WITH {@link FileUtil#loadResource(String)}
      *
      *  @param vertPath Path to the vertex shader
      *  @param fragPath Path to the fragment shader
@@ -352,8 +354,9 @@ public class Renderer{
     }
 
     /**
-     *  Renders an image from the given path
-     *
+     *  Renders an image from the given path with default width and height
+     *  <p>
+     *  YOU DO NOT NEED TO USE THIS WITH {@link FileUtil#loadResource(String)}
      *  @param x The x coordinate of where to render the image
      *  @param y The y coordinate of where to render the image
      *  @param path The path of the file
@@ -362,7 +365,7 @@ public class Renderer{
     public static void renderImage(float x, float y, String path){
         ByteBuffer imageBuffer = null;
         try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(FileUtil.loadResource(path), 8 * 1024);
+            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -378,6 +381,8 @@ public class Renderer{
 
     /**
      *  Renders an image from the given path
+     *  <p>
+     *  YOU DO NOT NEED TO USE THIS WITH {@link FileUtil#loadResource(String)}
      *
      *  @param x The x coordinate of where to render the image
      *  @param y The y coordinate of where to render the image
@@ -392,7 +397,7 @@ public class Renderer{
         ByteBuffer image;
         ByteBuffer imageBuffer = null;
         try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(FileUtil.loadResource(path), 8 * 1024);
+            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -400,6 +405,7 @@ public class Renderer{
         IntBuffer ww = BufferUtils.createIntBuffer(1);
         IntBuffer hh = BufferUtils.createIntBuffer(1);
         IntBuffer comp = BufferUtils.createIntBuffer(1);
+
 
         stbi_info_from_memory(imageBuffer, ww, hh, comp);
 
@@ -429,6 +435,8 @@ public class Renderer{
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glEnable(GL_TEXTURE_2D);
+
+        glTranslatef(x, y, 0);
 
         glBegin(GL_QUADS);
 

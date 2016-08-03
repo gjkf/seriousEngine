@@ -43,10 +43,10 @@ public class MainScreen extends GuiScreenWidget{
                     Renderer.drawArray(new float[]{10,10, 150,420, 600,500}, Colors.GREEN.color, GL11.GL_TRIANGLES);
                 }
                 );
-//        Renderer.setFont(FileUtil.loadResource("fonts/ASO.ttf")); // Sets the font
-//        Renderer.drawText(500, 500, "This is some sample text with font", 10, Colors.WHITE.color); // Draws text with the font
-        Renderer.renderFont(500, 200, "Test", 5f, Colors.BLUE.color); // Draws debug text
-        Renderer.renderImage(100, 100, "textures/Globe.png");
+//        Renderer.setFont("fonts/ASO.ttf"); // Sets the font
+//        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color); // Draws text with the font
+//        Renderer.renderFont(100, 500, "Test", 5f, Colors.BLUE.color); // Draws debug text
+//        Renderer.renderImage(100, 100, "textures/Globe.png");
 	}
 
 	@Override

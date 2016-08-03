@@ -51,12 +51,14 @@ public class FileUtil{
      */
 
     public static String loadResource(String path){
+       String s;
         try{
-            return SeriousEngine.runningDirectory.getResource(path).getFile();
+            s =  SeriousEngine.runningDirectory.getResource(path).getFile();
         }catch(NullPointerException e){
             e.printStackTrace();
-            return null;
+            s = "null";
         }
+        return s;
     }
 
     /**
