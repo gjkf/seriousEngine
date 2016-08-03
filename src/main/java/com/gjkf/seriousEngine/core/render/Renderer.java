@@ -202,7 +202,8 @@ public class Renderer{
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
 
-        glColor3f(color.r, color.g, color.b);
+        if(color != null) // In case the color is equals to Colors.NULL (used for shaders and other stuff
+            glColor3f(color.r, color.g, color.b);
         glDrawArrays(mode, 0, vertices.length);
 
         glBindVertexArray(0);
@@ -406,7 +407,6 @@ public class Renderer{
         IntBuffer hh = BufferUtils.createIntBuffer(1);
         IntBuffer comp = BufferUtils.createIntBuffer(1);
 
-
         stbi_info_from_memory(imageBuffer, ww, hh, comp);
 
         image = stbi_load_from_memory(imageBuffer, ww, hh, comp, 0);
@@ -459,6 +459,84 @@ public class Renderer{
         stbi_image_free(image);
 
         glPopMatrix();
+    }
+
+    public static void renderImage(float x, float y, float width, float height, HashMap<String, Object> map){
+        glPushMatrix();
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+
+        int w = (int) map.get("width");
+        int h = (int) map.get("height");
+
+        if((int) map.get("comp") == 3){
+            if ( (w & 3) != 0 )
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w & 1));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) map.get("buffer"));
+        }else{
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) map.get("buffer"));
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        glEnable(GL_TEXTURE_2D);
+
+        glTranslatef(x, y, 0);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(0.0f, 0.0f);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(width, 0.0f);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(width, height);
+
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(0.0f, height);
+
+        glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+
+        stbi_image_free((ByteBuffer) map.get("buffer"));
+
+        glPopMatrix();
+    }
+
+    public static HashMap<String, Object> loadImage(String path){
+        ByteBuffer image;
+        ByteBuffer imageBuffer = null;
+        try{
+            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        IntBuffer ww = BufferUtils.createIntBuffer(1);
+        IntBuffer hh = BufferUtils.createIntBuffer(1);
+        IntBuffer comp = BufferUtils.createIntBuffer(1);
+
+
+        stbi_info_from_memory(imageBuffer, ww, hh, comp);
+
+        image = stbi_load_from_memory(imageBuffer, ww, hh, comp, 0);
+
+        if(image == null)
+            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+
+        HashMap<String, Object> m = new HashMap<>();
+        m.put("buffer", image);
+        m.put("width", ww.get(0));
+        m.put("height", hh.get(0));
+        m.put("comp", comp.get(0));
+        return m;
     }
 
     public static String getFont(){

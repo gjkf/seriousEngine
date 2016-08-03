@@ -11,11 +11,12 @@ import com.gjkf.seriousEngine.core.math.Vector4f;
 import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Renderer;
 import com.gjkf.seriousEngine.core.util.FileUtil;
-import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
 public class MainScreen extends GuiScreenWidget{
+
+    HashMap<String, Object> image;
 
 	public MainScreen(int width, int height){
 		super(width, height);
@@ -24,7 +25,8 @@ public class MainScreen extends GuiScreenWidget{
 //				new Point2i(440, 420),
 //				new Point2i(600, 500)
 //		}, Colors.WHITE.color, () -> System.out.println("TEST!")));
-	}
+        image = Renderer.loadImage("textures/Globe.png");
+    }
 
 
 	@Override
@@ -39,14 +41,15 @@ public class MainScreen extends GuiScreenWidget{
                 FileUtil.loadResource("shaders/gradient.glsl"), // Sets the red fragment color, the problem is that it sets it for all things
 				m,
                 () -> {
-//                    Renderer.drawRect(10, 10, 700, 700, Colors.GREEN.color);
-                    Renderer.drawArray(new float[]{10,10, 150,420, 600,500}, Colors.GREEN.color, GL11.GL_TRIANGLES);
+                    Renderer.drawRect(0, 0, 100, 100, Colors.NULL.color);
+//                    Renderer.drawArray(new float[]{10,10, 150,420, 600,500}, Colors.GREEN.color, GL11.GL_TRIANGLES);
                 }
                 );
-//        Renderer.setFont("fonts/ASO.ttf"); // Sets the font
-//        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color); // Draws text with the font
+		Renderer.renderImage(200, 300, 150, 150, image);
+        Renderer.setFont("fonts/ASO.ttf"); // Sets the font
+        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color); // Draws text with the font
 //        Renderer.renderFont(100, 500, "Test", 5f, Colors.BLUE.color); // Draws debug text
-//        Renderer.renderImage(100, 100, "textures/Globe.png");
+
 	}
 
 	@Override

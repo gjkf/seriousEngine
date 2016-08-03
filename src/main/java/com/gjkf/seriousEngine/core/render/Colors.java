@@ -9,7 +9,8 @@ public enum Colors{
 	BLACK(new Color3f(0f, 0f, 0f)),
 	RED(new Color3f(1f, 0f, 0f)),
 	GREEN(new Color3f(0f, 1f, 0f)),
-	BLUE(new Color3f(0f, 0f, 1f));
+	BLUE(new Color3f(0f, 0f, 1f)),
+	NULL(null);
 
 	public final Color3f color;
 
