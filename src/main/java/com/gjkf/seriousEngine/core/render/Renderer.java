@@ -461,20 +461,17 @@ public class Renderer{
         glPopMatrix();
     }
 
-    public static void renderImage(float x, float y, float width, float height, HashMap<String, Object> map){
+    public static void renderImage(float x, float y, float width, float height, Image image){
         glPushMatrix();
         int texID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texID);
 
-        int w = (int) map.get("width");
-        int h = (int) map.get("height");
-
-        if((int) map.get("comp") == 3){
-            if ( (w & 3) != 0 )
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w & 1));
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) map.get("buffer"));
+        if(image.comp == 3){
+            if ( (image.width & 3) != 0 )
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (image.width & 1));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image.image);
         }else{
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) map.get("buffer"));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.image);
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -485,58 +482,27 @@ public class Renderer{
 
         glEnable(GL_TEXTURE_2D);
 
-        glTranslatef(x, y, 0);
-
         glBegin(GL_QUADS);
 
         glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(0.0f, 0.0f);
+        glVertex2f(x, y);
 
         glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(width, 0.0f);
+        glVertex2f(x+width, y);
 
         glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(width, height);
+        glVertex2f(x+width, y+height);
 
         glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(0.0f, height);
+        glVertex2f(x, y+height);
 
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
 
-        stbi_image_free((ByteBuffer) map.get("buffer"));
+        stbi_image_free(image.image);
 
         glPopMatrix();
-    }
-
-    public static HashMap<String, Object> loadImage(String path){
-        ByteBuffer image;
-        ByteBuffer imageBuffer = null;
-        try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        IntBuffer ww = BufferUtils.createIntBuffer(1);
-        IntBuffer hh = BufferUtils.createIntBuffer(1);
-        IntBuffer comp = BufferUtils.createIntBuffer(1);
-
-
-        stbi_info_from_memory(imageBuffer, ww, hh, comp);
-
-        image = stbi_load_from_memory(imageBuffer, ww, hh, comp, 0);
-
-        if(image == null)
-            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-
-        HashMap<String, Object> m = new HashMap<>();
-        m.put("buffer", image);
-        m.put("width", ww.get(0));
-        m.put("height", hh.get(0));
-        m.put("comp", comp.get(0));
-        return m;
     }
 
     public static String getFont(){
