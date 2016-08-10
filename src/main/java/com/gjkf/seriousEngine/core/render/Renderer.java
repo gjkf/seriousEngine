@@ -21,7 +21,6 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBEasyFont.stb_easy_font_print;
-import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 
@@ -277,6 +276,7 @@ public class Renderer{
         program.attachShader(v);
         Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, fragPath);
         program.attachShader(f);
+        program.bindFragmentDataLocation(0, "fragColor");
         program.link();
         program.use();
 
@@ -351,156 +351,168 @@ public class Renderer{
         program.enableVertexAttribute(colAttrib);
         program.pointVertexAttribute(colAttrib, 3, 7 * Float.BYTES, 2 * Float.BYTES);
 
+        /* Specify Texture Pointer */
+        int texAttrib = program.getAttributeLocation("texcoord");
+        program.enableVertexAttribute(texAttrib);
+        program.pointVertexAttribute(texAttrib, 2, 7 * Float.BYTES, 5 * Float.BYTES);
+
         return program;
     }
 
     /**
-     *  Renders an image from the given path with default width and height
-     *  <p>
-     *  YOU DO NOT NEED TO USE THIS WITH {@link FileUtil#loadResource(String)}
-     *  @param x The x coordinate of where to render the image
-     *  @param y The y coordinate of where to render the image
-     *  @param path The path of the file
+     * Draws the currently bound texture on specified coordinates and with
+     * specified color.
+     *
+     * @param image Used for getting width and height of the texture
+     * @param x       X position of the texture
+     * @param y       Y position of the texture
      */
-
-    public static void renderImage(float x, float y, String path){
-        ByteBuffer imageBuffer = null;
-        try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        IntBuffer ww = BufferUtils.createIntBuffer(1);
-        IntBuffer hh = BufferUtils.createIntBuffer(1);
-        IntBuffer comp = BufferUtils.createIntBuffer(1);
-
-        stbi_info_from_memory(imageBuffer, ww, hh, comp);
-
-        renderImage(x, y, ww.get(0), hh.get(0), path);
+    public static void drawImage(Image image, float x, float y) {
+        drawImage(image, x, y, image.getWidth(), image.getHeight());
     }
 
     /**
-     *  Renders an image from the given path
-     *  <p>
-     *  YOU DO NOT NEED TO USE THIS WITH {@link FileUtil#loadResource(String)}
+     * Draws the currently bound texture on specified coordinates and with
+     * specified color.
      *
-     *  @param x The x coordinate of where to render the image
-     *  @param y The y coordinate of where to render the image
-     *  @param width The width of the rendered image
-     *  @param height The height of the rendered image
-     *  @param path The path of the file
+     * @param image Used for getting width and height of the texture
+     * @param x       X position of the texture
+     * @param y       Y position of the texture
      */
+    public static void drawImage(Image image, float x, float y, float width, float height) {
+        /* Vertex positions */
+        float x1 = x;
+        float y1 = y;
+        float x2 = x1 + width;
+        float y2 = y1 + height;
 
-    public static void renderImage(float x, float y, float width, float height, String path){
-        glPushMatrix();
+        /* Texture coordinates */
+        float s1 = 0f;
+        float t1 = 0f;
+        float s2 = 1f;
+        float t2 = 1f;
 
-        ByteBuffer image;
-        ByteBuffer imageBuffer = null;
-        try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        IntBuffer ww = BufferUtils.createIntBuffer(1);
-        IntBuffer hh = BufferUtils.createIntBuffer(1);
-        IntBuffer comp = BufferUtils.createIntBuffer(1);
-
-        stbi_info_from_memory(imageBuffer, ww, hh, comp);
-
-        image = stbi_load_from_memory(imageBuffer, ww, hh, comp, 0);
-
-        if(image == null)
-            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
-
-        int w = ww.get(0);
-        int h = hh.get(0);
-
-        if(comp.get(0) == 3){
-            if ( (w & 3) != 0 )
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w & 1));
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-        }else{
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        glEnable(GL_TEXTURE_2D);
-
-        glTranslatef(x, y, 0);
-
-        glBegin(GL_QUADS);
-
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(0.0f, 0.0f);
-
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(width, 0.0f);
-
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(width, height);
-
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(0.0f, height);
-
-        glEnd();
-
-        glDisable(GL_TEXTURE_2D);
-
-        stbi_image_free(image);
-
-        glPopMatrix();
+        drawImageRegion(image, x1, y1, x2, y2, s1, t1, s2, t2);
     }
 
-    public static void renderImage(float x, float y, float width, float height, Image image){
+    /**
+     * Draws a texture region with the currently bound texture on specified
+     * coordinates.
+     *
+     * @param image   Used for getting width and height of the texture
+     * @param x         X position of the texture
+     * @param y         Y position of the texture
+     * @param regX      X position of the texture region
+     * @param regY      Y position of the texture region
+     * @param regWidth  Width of the texture region
+     * @param regHeight Height of the texture region
+     */
+    public static void drawImageRegion(Image image, float x, float y, float regX, float regY, float regWidth, float regHeight) {
+        /* Vertex positions */
+        float x1 = x;
+        float y1 = y;
+        float x2 = x + regWidth;
+        float y2 = y + regHeight;
+
+        /* Texture coordinates */
+        float s1 = regX / image.getWidth();
+        float t1 = regY / image.getHeight();
+        float s2 = (regX + regWidth) / image.getWidth();
+        float t2 = (regY + regHeight) / image.getHeight();
+
+        drawImageRegion(image, x1, y1, x2, y2, s1, t1, s2, t2);
+    }
+
+    /**
+     * Draws a texture region with the currently bound texture on specified
+     * coordinates.
+     *
+     * @param x1 Bottom left x position
+     * @param y1 Bottom left y position
+     * @param x2 Top right x position
+     * @param y2 Top right y position
+     * @param s1 Bottom left s coordinate
+     * @param t1 Bottom left t coordinate
+     * @param s2 Top right s coordinate
+     * @param t2 Top right t coordinate
+     */
+
+    public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2){
         glPushMatrix();
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
 
-        if(image.comp == 3){
-            if ( (image.width & 3) != 0 )
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (image.width & 1));
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image.image);
-        }else{
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.image);
+        long window = GLFW.glfwGetCurrentContext();
+        IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
+        IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        GLFW.glfwGetFramebufferSize(window, widthBuffer, heightBuffer);
+        int w = widthBuffer.get();
+        int h = heightBuffer.get();
 
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+        glBindTexture(GL_TEXTURE_2D, image.getID());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        int vao = glGenVertexArrays();
+        glBindVertexArray(vao);
 
-        glEnable(GL_TEXTURE_2D);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 7);
+        vertices.put(x1).put(y1).put(1).put(1).put(1).put(s1).put(t1);
+        vertices.put(x1).put(y2).put(1).put(1).put(1).put(s1).put(t2);
+        vertices.put(x2).put(y2).put(1).put(1).put(1).put(s2).put(t2);
 
-        glBegin(GL_QUADS);
+        vertices.put(x1).put(y1).put(1).put(1).put(1).put(s1).put(t1);
+        vertices.put(x2).put(y2).put(1).put(1).put(1).put(s2).put(t2);
+        vertices.put(x2).put(y1).put(1).put(1).put(1).put(s2).put(t1);
+        vertices.flip();
 
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(x, y);
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(x+width, y);
+        int ebo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(x+width, y+height);
+        IntBuffer elements = BufferUtils.createIntBuffer(2 * 3);
+        elements.put(0).put(1).put(2);
+        elements.put(2).put(3).put(0);
+        elements.flip();
 
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(x, y+height);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
 
-        glEnd();
+        ShaderProgram program = new ShaderProgram();
+        Shader v = Shader.loadShader(GL_VERTEX_SHADER, FileUtil.loadResource("shaders/texVertex.glsl"));
+        program.attachShader(v);
+        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, FileUtil.loadResource("shaders/texFrag.glsl"));
+        program.attachShader(f);
+        program.bindFragmentDataLocation(0, "fragColor");
+        program.link();
+        program.use();
 
-        glDisable(GL_TEXTURE_2D);
+        program = specifyVertexAttributes(program);
 
-        stbi_image_free(image.image);
+        /* Set texture uniform */
+        int uniTex = program.getUniformLocation("texImage");
+        program.setUniform(uniTex, 0);
+
+        /* Set model matrix to identity matrix */
+        Matrix4f model = new Matrix4f();
+        int uniModel = program.getUniformLocation("model");
+        program.setUniform(uniModel, model);
+
+        /* Set view matrix to identity matrix */
+        Matrix4f view = new Matrix4f();
+        int uniView = program.getUniformLocation("view");
+        program.setUniform(uniView, view);
+
+        /* Set projection matrix to an orthographic projection */
+        Matrix4f projection = Matrix4f.orthographic(0f, w, h, 0f, -1f, 1f);
+        int uniProjection = program.getUniformLocation("projection");
+        program.setUniform(uniProjection, projection);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glDeleteTextures(image.getID());
+        v.delete();
+        f.delete();
+        program.delete();
+        glUseProgram(0);
 
         glPopMatrix();
     }

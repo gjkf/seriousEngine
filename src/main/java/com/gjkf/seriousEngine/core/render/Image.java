@@ -3,59 +3,98 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
-import com.gjkf.seriousEngine.core.util.FileUtil;
 import org.lwjgl.BufferUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
-import static org.lwjgl.stb.STBImage.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 
 public class Image{
 
-    private String path;
+    private ByteBuffer image;
+    private int width, height, id;
 
-    public ByteBuffer image;
-    public int width, height, comp;
-
-    public Image(String path){
-        this.path = path;
-        this.loadImage();
-    }
-
-    public Image(String path, ByteBuffer image, int width, int height, int comp){
-        this.path = path;
-        this.image = image;
+    private Image(int width, int height, ByteBuffer data){
+        this.id = glGenTextures();
         this.width = width;
         this.height = height;
-        this.comp = comp;
+        this.image = data;
+
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     }
 
-    public Image loadImage(){
-        ByteBuffer imageBuffer = BufferUtils.createByteBuffer(8*1024);
+    public int getID(){
+        return id;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public ByteBuffer getImage(){
+        return image;
+    }
+
+    public static Image loadImage(String path){
+        InputStream in;
+        BufferedImage im = null;
+
         try{
-            imageBuffer = FileUtil.ioResourceToByteBuffer(path, 8 * 1024);
+            in = new FileInputStream(path);
+            im = ImageIO.read(in);
         }catch(IOException e){
             e.printStackTrace();
         }
 
-        IntBuffer ww = BufferUtils.createIntBuffer(1);
-        IntBuffer hh = BufferUtils.createIntBuffer(1);
-        IntBuffer compc = BufferUtils.createIntBuffer(1);
+        int width = im.getWidth();
+        int height = im.getHeight();
 
-        stbi_info_from_memory(imageBuffer, ww, hh, compc);
+        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
+        int[] pixels = new int[width * height];
+        im.getRGB(0, 0, width, height, pixels, 0, width);
 
-        width = ww.get(0);
-        height = hh.get(0);
-        comp = compc.get(0);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                     /* Pixel as RGBA: 0xAARRGGBB */
+                int pixel = pixels[y * width + x];
 
-        image = stbi_load_from_memory(imageBuffer, ww, hh, compc, 0);
+                    /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
+                buffer.put((byte) ((pixel >> 16) & 0xFF));
 
-        if(image == null)
-            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+                    /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
+                buffer.put((byte) ((pixel >> 8) & 0xFF));
 
-        return new Image(path, image, width, height, comp);
+                    /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
+                buffer.put((byte) (pixel & 0xFF));
+
+                    /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
+                buffer.put((byte) ((pixel >> 24) & 0xFF));
+            }
+        }
+
+            /* Do not forget to flip the buffer! */
+        buffer.flip();
+
+        return new Image(width, height, buffer);
     }
 
 }
