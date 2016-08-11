@@ -3,6 +3,7 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
+import com.gjkf.seriousEngine.core.util.FileUtil;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
@@ -56,21 +57,22 @@ public class Image{
 
     public static Image loadImage(String path){
         InputStream in;
-        BufferedImage im = null;
+        BufferedImage image = null;
 
         try{
-            in = new FileInputStream(path);
-            im = ImageIO.read(in);
+            in = new FileInputStream(FileUtil.loadResource(path));
+            image = ImageIO.read(in);
         }catch(IOException e){
             e.printStackTrace();
         }
 
-        int width = im.getWidth();
-        int height = im.getHeight();
+        assert image != null;
+        int width = image.getWidth();
+        int height = image.getHeight();
 
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
         int[] pixels = new int[width * height];
-        im.getRGB(0, 0, width, height, pixels, 0, width);
+        image.getRGB(0, 0, width, height, pixels, 0, width);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

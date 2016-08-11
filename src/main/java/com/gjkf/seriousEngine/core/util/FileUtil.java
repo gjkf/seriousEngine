@@ -33,8 +33,7 @@ public class FileUtil{
                 builder.append(line).append("\n");
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Failed to load a file!"
-                    + System.lineSeparator() + ex.getMessage());
+            throw new RuntimeException("Failed to load a file" + System.lineSeparator() + ex.getMessage());
         }
 
         return builder.toString();

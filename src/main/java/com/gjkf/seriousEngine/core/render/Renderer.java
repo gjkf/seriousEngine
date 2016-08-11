@@ -272,9 +272,9 @@ public class Renderer{
         glPushMatrix();
 
         ShaderProgram program = new ShaderProgram();
-        Shader v = Shader.loadShader(GL_VERTEX_SHADER, vertPath);
+        Shader v = Shader.loadShader(GL_VERTEX_SHADER, FileUtil.loadResource(vertPath));
         program.attachShader(v);
-        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, fragPath);
+        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, FileUtil.loadResource(fragPath));
         program.attachShader(f);
         program.bindFragmentDataLocation(0, "fragColor");
         program.link();
@@ -364,11 +364,24 @@ public class Renderer{
      * specified color.
      *
      * @param image Used for getting width and height of the texture
-     * @param x       X position of the texture
-     * @param y       Y position of the texture
+     * @param x     X position of the texture
+     * @param y     Y position of the texture
      */
     public static void drawImage(Image image, float x, float y) {
-        drawImage(image, x, y, image.getWidth(), image.getHeight());
+        drawImage(image, x, y, image.getWidth(), image.getHeight(), Colors.WHITE.color);
+    }
+
+    /**
+     * Draws the currently bound texture on specified coordinates and with
+     * specified color.
+     *
+     * @param image Used for getting width and height of the texture
+     * @param x     X position of the texture
+     * @param y     Y position of the texture
+     * @param color The fill color
+     */
+    public static void drawImage(Image image, float x, float y, Color3f color) {
+        drawImage(image, x, y, image.getWidth(), image.getHeight(), color);
     }
 
     /**
@@ -380,19 +393,30 @@ public class Renderer{
      * @param y       Y position of the texture
      */
     public static void drawImage(Image image, float x, float y, float width, float height) {
+        drawImage(image, x, y, width, height, Colors.WHITE.color);
+    }
+
+    /**
+     * Draws the currently bound texture on specified coordinates and with
+     * specified color.
+     *
+     * @param image Used for getting width and height of the texture
+     * @param x       X position of the texture
+     * @param y       Y position of the texture
+     * @param color The fill color
+     */
+    public static void drawImage(Image image, float x, float y, float width, float height, Color3f color) {
         /* Vertex positions */
-        float x1 = x;
-        float y1 = y;
-        float x2 = x1 + width;
-        float y2 = y1 + height;
+        float x2 = x + width;
+        float y2 = y + height;
 
         /* Texture coordinates */
-        float s1 = 0f;
-        float t1 = 0f;
-        float s2 = 1f;
-        float t2 = 1f;
+        float s1 = 0;
+        float t1 = 0;
+        float s2 = 1;
+        float t2 = 1;
 
-        drawImageRegion(image, x1, y1, x2, y2, s1, t1, s2, t2);
+        drawImageRegion(image, x, y, x2, y2, s1, t1, s2, t2, color);
     }
 
     /**
@@ -408,9 +432,24 @@ public class Renderer{
      * @param regHeight Height of the texture region
      */
     public static void drawImageRegion(Image image, float x, float y, float regX, float regY, float regWidth, float regHeight) {
+        drawImageRegion(image, x, y, regX, regY, regWidth, regHeight, Colors.WHITE.color);
+    }
+
+    /**
+     * Draws a texture region with the currently bound texture on specified
+     * coordinates.
+     *
+     * @param image   Used for getting width and height of the texture
+     * @param x         X position of the texture
+     * @param y         Y position of the texture
+     * @param regX      X position of the texture region
+     * @param regY      Y position of the texture region
+     * @param regWidth  Width of the texture region
+     * @param regHeight Height of the texture region
+     * @param color The fill color
+     */
+    public static void drawImageRegion(Image image, float x, float y, float regX, float regY, float regWidth, float regHeight, Color3f color) {
         /* Vertex positions */
-        float x1 = x;
-        float y1 = y;
         float x2 = x + regWidth;
         float y2 = y + regHeight;
 
@@ -420,7 +459,7 @@ public class Renderer{
         float s2 = (regX + regWidth) / image.getWidth();
         float t2 = (regY + regHeight) / image.getHeight();
 
-        drawImageRegion(image, x1, y1, x2, y2, s1, t1, s2, t2);
+        drawImageRegion(image, x, y, x2, y2, s1, t1, s2, t2, color);
     }
 
     /**
@@ -437,7 +476,7 @@ public class Renderer{
      * @param t2 Top right t coordinate
      */
 
-    public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2){
+    public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color3f color){
         glPushMatrix();
 
         long window = GLFW.glfwGetCurrentContext();
@@ -452,14 +491,15 @@ public class Renderer{
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 7);
-        vertices.put(x1).put(y1).put(1).put(1).put(1).put(s1).put(t1);
-        vertices.put(x1).put(y2).put(1).put(1).put(1).put(s1).put(t2);
-        vertices.put(x2).put(y2).put(1).put(1).put(1).put(s2).put(t2);
+        float r = color.r;
+        float g = color.g;
+        float b = color.b;
 
-        vertices.put(x1).put(y1).put(1).put(1).put(1).put(s1).put(t1);
-        vertices.put(x2).put(y2).put(1).put(1).put(1).put(s2).put(t2);
-        vertices.put(x2).put(y1).put(1).put(1).put(1).put(s2).put(t1);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 7);
+        vertices.put(x1).put(y1).put(r).put(g).put(b).put(s1).put(t1);
+        vertices.put(x2).put(y1).put(r).put(g).put(b).put(s2).put(s1);
+        vertices.put(x2).put(y2).put(r).put(g).put(b).put(s2).put(t2);
+        vertices.put(x1).put(y2).put(r).put(g).put(b).put(s1).put(t2);
         vertices.flip();
 
         int vbo = glGenBuffers();
