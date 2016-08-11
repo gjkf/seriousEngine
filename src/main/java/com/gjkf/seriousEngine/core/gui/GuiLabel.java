@@ -28,7 +28,11 @@ public class GuiLabel extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		Renderer.renderFont(x, y, this.text, this.scale, this.color);
+        if(Renderer.getFont() != null){
+            Renderer.drawText(x, y, this.text, (int)this.scale, this.color);
+        }else{
+            Renderer.renderFont(x, y, this.text, this.scale, this.color);
+        }
 	}
 
 }

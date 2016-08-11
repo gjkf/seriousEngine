@@ -4,6 +4,8 @@
 package com.gjkf.seriousEngine.core.gui;
 
 import com.gjkf.seriousEngine.core.controls.MouseInput;
+import com.gjkf.seriousEngine.core.render.Colors;
+import com.gjkf.seriousEngine.core.render.Renderer;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -17,6 +19,7 @@ public abstract class GuiWidget{
 
 	public int x, y, width, height;
 	public MouseListener listener;
+    public boolean debug = false;
 
 	public GuiWidget(int x, int y, int width, int height, MouseListener mouseListener){
 		this.x = x;
@@ -43,7 +46,16 @@ public abstract class GuiWidget{
 	 * 	Draw method for the widget
 	 */
 
-	public void draw(){}
+	public void draw(){
+	    if(debug){
+            for(int i = 0; i < width; i += width / 10){
+                Renderer.drawLine(i, 0, i, height, Colors.GREEN.color);
+            }
+            for(int i = 0; i < width; i += height / 10){
+                Renderer.drawLine(0, i, width, i, Colors.GREEN.color);
+            }
+        }
+    }
 
 	/**
 	 * 	Update method for the widget

@@ -48,6 +48,7 @@ public abstract class GuiScreenWidget extends GuiWidget{
 
 	@Override
 	public void draw(){
+	    super.draw();
 		GL11.glPushMatrix();
 
 		drawBackground();

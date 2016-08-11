@@ -31,13 +31,17 @@ public class GuiButton extends GuiWidget{
 	public void draw(){
 		super.draw();
 		if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
-			Renderer.drawLine(x-15, y-5, x-5, y+height/2, Colors.WHITE.color);
-			Renderer.drawLine(x-15, y+height+5, x-5, y+height/2, Colors.WHITE.color);
-			Renderer.drawLine(x+width+15, y-5, x+width+6, y+height/2, Colors.WHITE.color);
-			Renderer.drawLine(x+width+15, y+height+5, x+width+6, y+height/2, Colors.WHITE.color);
+			Renderer.drawLine(x-15, y-15, x-15, y+height+15, Colors.WHITE.color);
+			Renderer.drawLine(x-15, y+height+15, x+width+15, y+height+15, Colors.WHITE.color);
+			Renderer.drawLine(x+width+15, y+height+15, x+width+15, y-15, Colors.WHITE.color);
+			Renderer.drawLine(x-15, y-15, x+width+15, y-15, Colors.WHITE.color);
 		}
 
-		Renderer.renderFont(x, y+height/4, this.text, this.scale, Colors.WHITE.color);
-	}
+		if(Renderer.getFont() != null){
+	        Renderer.drawText(x, y, text, (int)this.scale, Colors.WHITE.color);
+        }else{
+            Renderer.renderFont(x, y + height / 4, this.text, this.scale, Colors.WHITE.color);
+        }
+    }
 
 }
