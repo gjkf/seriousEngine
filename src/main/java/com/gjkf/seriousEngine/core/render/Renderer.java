@@ -272,9 +272,9 @@ public class Renderer{
         glPushMatrix();
 
         ShaderProgram program = new ShaderProgram();
-        Shader v = Shader.loadShader(GL_VERTEX_SHADER, FileUtil.loadResource(vertPath));
+        Shader v = Shader.loadShader(GL_VERTEX_SHADER, vertPath);
         program.attachShader(v);
-        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, FileUtil.loadResource(fragPath));
+        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, fragPath);
         program.attachShader(f);
         program.bindFragmentDataLocation(0, "fragColor");
         program.link();
@@ -517,9 +517,9 @@ public class Renderer{
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
 
         ShaderProgram program = new ShaderProgram();
-        Shader v = Shader.loadShader(GL_VERTEX_SHADER, FileUtil.loadResource("shaders/texVertex.glsl"));
+        Shader v = Shader.loadShader(GL_VERTEX_SHADER, "shaders/texVertex.glsl");
         program.attachShader(v);
-        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, FileUtil.loadResource("shaders/texFrag.glsl"));
+        Shader f = Shader.loadShader(GL_FRAGMENT_SHADER, "shaders/texFrag.glsl");
         program.attachShader(f);
         program.bindFragmentDataLocation(0, "fragColor");
         program.link();

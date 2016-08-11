@@ -8,7 +8,6 @@ import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -60,7 +59,7 @@ public class Image{
         BufferedImage image = null;
 
         try{
-            in = new FileInputStream(FileUtil.loadResource(path));
+            in = FileUtil.loadResource(path);
             image = ImageIO.read(in);
         }catch(IOException e){
             e.printStackTrace();

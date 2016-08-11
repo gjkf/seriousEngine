@@ -26,8 +26,7 @@ public class FileUtil{
     public static String readFile(String path){
         StringBuilder builder = new StringBuilder();
 
-        try (InputStream in = new FileInputStream(path);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+        try (InputStream in = loadResource(path); BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
@@ -49,15 +48,8 @@ public class FileUtil{
      *  @return The file location
      */
 
-    public static String loadResource(String path){
-       String s;
-        try{
-            s =  SeriousEngine.runningDirectory.getResource(path).getFile();
-        }catch(NullPointerException e){
-            e.printStackTrace();
-            s = "null";
-        }
-        return s;
+    public static InputStream loadResource(String path){
+        return SeriousEngine.runningDirectory.getResourceAsStream(path);
     }
 
     /**
