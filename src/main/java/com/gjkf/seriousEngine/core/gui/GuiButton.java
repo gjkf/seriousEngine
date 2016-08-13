@@ -22,7 +22,18 @@ public class GuiButton extends GuiWidget{
 	private float scale;
 
 	public GuiButton(int x, int y, String text, float scale, MouseListener listener){
-		super(x, y, (int)(STBEasyFont.stb_easy_font_width(text)*scale), (int)(12*scale), listener);
+        super(x, y,
+                (
+                        (Renderer.getFont() == null) ?
+                        (int)(STBEasyFont.stb_easy_font_width(text)*scale) :
+                        (int)(scale*text.length())
+                ),
+                (
+                        (Renderer.getFont() == null) ?
+                        (int)(12*scale) :
+                        (int)(scale)
+                ),
+                listener);
 		this.text = text;
 		this.scale = scale;
 	}
@@ -30,17 +41,22 @@ public class GuiButton extends GuiWidget{
 	@Override
 	public void draw(){
 		super.draw();
-		if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
-			Renderer.drawLine(x-15, y-15, x-15, y+height+15, Colors.WHITE.color);
-			Renderer.drawLine(x-15, y+height+15, x+width+15, y+height+15, Colors.WHITE.color);
-			Renderer.drawLine(x+width+15, y+height+15, x+width+15, y-15, Colors.WHITE.color);
-			Renderer.drawLine(x-15, y-15, x+width+15, y-15, Colors.WHITE.color);
-		}
 
-		if(Renderer.getFont() != null){
-	        Renderer.drawText(x, y, text, (int)this.scale, Colors.WHITE.color);
+        if(Renderer.getFont() != null){
+	        if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
+                Renderer.drawText(this.x, this.y+this.scale/2, this.text, (int)this.scale, Colors.GREEN.color);
+	        }else{
+                Renderer.drawText(this.x, this.y+this.scale/2, this.text, (int)this.scale, Colors.WHITE.color);
+            }
         }else{
-            Renderer.renderFont(x, y + height / 4, this.text, this.scale, Colors.WHITE.color);
+            Renderer.renderFont(this.x, this.y + this.height / 4, this.text, this.scale, Colors.WHITE.color);
+        }
+
+        if(pointInside(MouseInput.getMouseX(), MouseInput.getMouseY())){
+            Renderer.drawLine(x - 15, y - 15, x - 15, y + height + 15, Colors.WHITE.color);
+            Renderer.drawLine(x - 15, y + height + 15, x + width + 15, y + height + 15, Colors.WHITE.color);
+            Renderer.drawLine(x + width + 15, y + height + 15, x + width + 15, y - 15, Colors.WHITE.color);
+            Renderer.drawLine(x - 15, y - 15, x + width + 15, y - 15, Colors.WHITE.color);
         }
     }
 

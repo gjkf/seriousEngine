@@ -8,10 +8,13 @@ import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.GuiButton;
 import com.gjkf.seriousEngine.core.gui.GuiScreenWidget;
 import com.gjkf.seriousEngine.core.render.Image;
+import com.gjkf.seriousEngine.core.render.Renderer;
 
 public class MainScreen extends GuiScreenWidget{
 
     Image image;
+
+    GuiButton b;
 
 	public MainScreen(int width, int height){
 		super(width, height);
@@ -20,7 +23,10 @@ public class MainScreen extends GuiScreenWidget{
 //				new Point2i(440, 420),
 //				new Point2i(600, 500)
 //		}, Colors.WHITE.color, () -> System.out.println("TEST!")));
-        add(new GuiButton(100, 100, "TEst", 10f, ()-> System.out.println("TEst")));
+        Renderer.setFont("fonts/ASO.ttf");
+        add(b = new GuiButton(150, 150, "Test", 50f, () -> {
+            System.out.println(b.x + " " + b.y + " " + b.width + " " + b.height);
+        }));
     }
 
 
@@ -45,7 +51,6 @@ public class MainScreen extends GuiScreenWidget{
         // Draws the top-left region of the image with a blue overlay color
 //        Renderer.drawImageRegion(image, 0, 0, 100, 100, 0, 0, 0.5f, 0.5f, Colors.GREEN.color);
         // Sets the font
-//        Renderer.setFont("fonts/ASO.ttf");
         // Draws text with the font
 //        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color);
 //        Renderer.renderFont(100, 500, "Test", 5f, Colors.BLUE.color);
@@ -53,7 +58,6 @@ public class MainScreen extends GuiScreenWidget{
 
 	@Override
 	public void drawForeground(){
-
 	}
 
     @Override

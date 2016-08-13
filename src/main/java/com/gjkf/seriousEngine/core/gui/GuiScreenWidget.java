@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public abstract class GuiScreenWidget extends GuiWidget{
 
-	private ArrayList<GuiWidget> widgets;
+	public ArrayList<GuiWidget> widgets;
 
 	public GuiScreenWidget(int width, int height){
 		super(0, 0, width, height, null);
