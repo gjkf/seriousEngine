@@ -6,7 +6,6 @@ package com.gjkf.seriousEngine;
 import com.gjkf.seriousEngine.core.controls.Keys;
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.Window;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,7 +18,6 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 public class SeriousEngine{
 
 	private GLFWMouseButtonCallback mouseButtonCallback;
-	private GLFWKeyCallback keyCallback;
 
 	public static ClassLoader runningDirectory;
 
@@ -73,13 +71,12 @@ public class SeriousEngine{
 			glfwTerminate();
 			window.getErrorCallback().release();
 			mouseButtonCallback.release();
-			keyCallback.release();
-		}
+            Keys.destroyCallback();
+        }
 	}
 
 	public void init(){
 		glfwSetMouseButtonCallback(window.window, mouseButtonCallback  = MouseInput.initMouseButton());
-		glfwSetKeyCallback(window.window, keyCallback = Keys.registerKeys());
 	}
 
 }

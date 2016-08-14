@@ -4,6 +4,8 @@
 
 package com.gjkf.seriousEngine.test;
 
+import com.gjkf.seriousEngine.SeriousEngine;
+import com.gjkf.seriousEngine.core.controls.Keys;
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.GuiButton;
 import com.gjkf.seriousEngine.core.gui.GuiScreenWidget;
@@ -58,7 +60,8 @@ public class MainScreen extends GuiScreenWidget{
 
 	@Override
 	public void drawForeground(){
-	}
+        Keys.registerKeys(SeriousEngine.window.window, (long w,int key, int code, int action, int mods) -> System.out.println(key));
+    }
 
     @Override
     public void mouseClicked(){
