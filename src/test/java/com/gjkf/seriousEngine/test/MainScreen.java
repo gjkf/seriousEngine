@@ -9,6 +9,7 @@ import com.gjkf.seriousEngine.core.controls.Keys;
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.GuiButton;
 import com.gjkf.seriousEngine.core.gui.GuiScreenWidget;
+import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Image;
 import com.gjkf.seriousEngine.core.render.Renderer;
 
@@ -18,6 +19,8 @@ public class MainScreen extends GuiScreenWidget{
 
     GuiButton b;
 
+    int a = 0;
+
 	public MainScreen(int width, int height){
 		super(width, height);
 //		add(new Triangle(new Point2i[]{
@@ -25,16 +28,15 @@ public class MainScreen extends GuiScreenWidget{
 //				new Point2i(440, 420),
 //				new Point2i(600, 500)
 //		}, Colors.WHITE.color, () -> System.out.println("TEST!")));
-        Renderer.setFont("fonts/ASO.ttf");
-        add(b = new GuiButton(150, 150, "Test", 50f, () -> {
-            System.out.println(b.x + " " + b.y + " " + b.width + " " + b.height);
-        }));
+//        Renderer.setFont("fonts/ASO.ttf");
+//        add(b = new GuiButton(150, 150, "Test", 50f, () -> {
+//            System.out.println(b.x + " " + b.y + " " + b.width + " " + b.height);
+//        }));
     }
 
 
 	@Override
 	public void drawBackground(){
-//        image = Image.loadImage("textures/Globe.png");
 //        // Map to set the variables for the shader
 //		HashMap<String, Object> m = new HashMap<>();
 //		m.put("uResolution", new Vector2f(590, 490));
@@ -50,8 +52,9 @@ public class MainScreen extends GuiScreenWidget{
 //                    Renderer.drawArray(new float[]{150,150, 250,420, 600,500}, Colors.GREEN.color, GL11.GL_TRIANGLES);
 //                }
 //                );
-        // Draws the top-left region of the image with a blue overlay color
-//        Renderer.drawImageRegion(image, 0, 0, 100, 100, 0, 0, 0.5f, 0.5f, Colors.GREEN.color);
+        // Draws the top-left region of the image with an overlay color
+        image = Image.loadImage("textures/lwjgl32.png");
+        Renderer.drawImageRegion(image, 0, 0, 0, 0, 32, 32, Colors.WHITE.color, a++);
         // Sets the font
         // Draws text with the font
 //        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color);

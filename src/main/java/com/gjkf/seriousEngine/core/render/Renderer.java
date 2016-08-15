@@ -466,6 +466,34 @@ public class Renderer{
      * Draws a texture region with the currently bound texture on specified
      * coordinates.
      *
+     * @param image   Used for getting width and height of the texture
+     * @param x         X position of the texture
+     * @param y         Y position of the texture
+     * @param regX      X position of the texture region
+     * @param regY      Y position of the texture region
+     * @param regWidth  Width of the texture region
+     * @param regHeight Height of the texture region
+     * @param color The fill color
+     * @param angle The rotation angle in degrees
+     */
+    public static void drawImageRegion(Image image, float x, float y, float regX, float regY, float regWidth, float regHeight, Color3f color, int angle) {
+        /* Vertex positions */
+        float x2 = x + regWidth;
+        float y2 = y + regHeight;
+
+        /* Texture coordinates */
+        float s1 = regX / image.getWidth();
+        float t1 = regY / image.getHeight();
+        float s2 = (regX + regWidth) / image.getWidth();
+        float t2 = (regY + regHeight) / image.getHeight();
+
+        drawImageRegion(image, x, y, x2, y2, s1, t1, s2, t2, color, angle);
+    }
+
+    /**
+     * Draws a texture region with the currently bound texture on specified
+     * coordinates.
+     *
      * @param x1 Bottom left x position
      * @param y1 Bottom left y position
      * @param x2 Top right x position
@@ -477,6 +505,25 @@ public class Renderer{
      */
 
     public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color3f color){
+        drawImageRegion(image, x1, y1, x2, y2, s1, t1, s2, t2, color, 0);
+    }
+
+    /**
+     * Draws a texture region with the currently bound texture on specified
+     * coordinates.
+     *
+     * @param x1 Bottom left x position
+     * @param y1 Bottom left y position
+     * @param x2 Top right x position
+     * @param y2 Top right y position
+     * @param s1 Bottom left s coordinate
+     * @param t1 Bottom left t coordinate
+     * @param s2 Top right s coordinate
+     * @param t2 Top right t coordinate
+     * @param angle The rotation angle in degrees
+     */
+
+    public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color3f color, int angle){
         glPushMatrix();
 
         long window = GLFW.glfwGetCurrentContext();
@@ -532,7 +579,7 @@ public class Renderer{
         program.setUniform(uniTex, 0);
 
         /* Set model matrix to identity matrix */
-        Matrix4f model = new Matrix4f();
+        Matrix4f model = Matrix4f.rotate(angle, 0, 0, 1);
         int uniModel = program.getUniformLocation("model");
         program.setUniform(uniModel, model);
 
