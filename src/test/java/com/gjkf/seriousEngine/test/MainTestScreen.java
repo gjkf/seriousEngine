@@ -13,7 +13,7 @@ import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Image;
 import com.gjkf.seriousEngine.core.render.Renderer;
 
-public class MainScreen extends GuiScreenWidget{
+public class MainTestScreen extends GuiScreenWidget{
 
     Image image;
 
@@ -21,7 +21,7 @@ public class MainScreen extends GuiScreenWidget{
 
     int a = 0;
 
-	public MainScreen(int width, int height){
+	public MainTestScreen(int width, int height){
 		super(width, height);
 //		add(new Triangle(new Point2i[]{
 //				new Point2i(500, 500),
@@ -54,7 +54,7 @@ public class MainScreen extends GuiScreenWidget{
 //                );
         // Draws the top-left region of the image with an overlay color
         image = Image.loadImage("textures/lwjgl32.png");
-        Renderer.drawImageRegion(image, 0, 0, 0, 0, 32, 32, Colors.WHITE.color, a++);
+        Renderer.drawImageRegion(image, 300, 500, 0, 0, 32, 32, Colors.WHITE.color, a++);
         // Sets the font
         // Draws text with the font
 //        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color);

@@ -579,7 +579,10 @@ public class Renderer{
         program.setUniform(uniTex, 0);
 
         /* Set model matrix to identity matrix */
-        Matrix4f model = Matrix4f.rotate(angle, 0, 0, 1);
+        Matrix4f m1 = Matrix4f.translateStatic(-(x1 + x2) / 2, -(y1 + y2) / 2, 0);
+        Matrix4f m2 = Matrix4f.rotateStatic(angle, 0, 0, 1);
+        Matrix4f m3 = Matrix4f.translateStatic((x1 + x2) / 2, (y1 + y2) / 2, 0);
+        Matrix4f model = m3.multiply(m2).multiply(m1);
         int uniModel = program.getUniformLocation("model");
         program.setUniform(uniModel, model);
 

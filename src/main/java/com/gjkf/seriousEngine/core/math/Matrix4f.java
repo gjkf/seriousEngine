@@ -383,7 +383,7 @@ public class Matrix4f {
      *
      * @return Translation matrix
      */
-    public static Matrix4f translate(float x, float y, float z) {
+    public static Matrix4f translateStatic(float x, float y, float z) {
         Matrix4f translation = new Matrix4f();
 
         translation.m03 = x;
@@ -393,6 +393,21 @@ public class Matrix4f {
         return translation;
     }
 
+    /**
+     * Creates a translation matrix. Similar to
+     * <code>glTranslate(x, y, z)</code>.
+     *
+     * @param x x coordinate of translation vector
+     * @param y y coordinate of translation vector
+     * @param z z coordinate of translation vector
+     *
+     */
+    public void translate(float x, float y, float z) {
+        m03 = x;
+        m13 = y;
+        m23 = z;
+    }
+    
     /**
      * Creates a rotation matrix. Similar to
      * <code>glRotate(angle, x, y, z)</code>.
@@ -404,7 +419,7 @@ public class Matrix4f {
      *
      * @return Rotation matrix
      */
-    public static Matrix4f rotate(float angle, float x, float y, float z) {
+    public static Matrix4f rotateStatic(float angle, float x, float y, float z) {
         Matrix4f rotation = new Matrix4f();
 
         float c = (float) Math.cos(Math.toRadians(angle));
@@ -428,6 +443,38 @@ public class Matrix4f {
         rotation.m22 = z * z * (1f - c) + c;
 
         return rotation;
+    }
+
+    /**
+     * Creates a rotation matrix. Similar to
+     * <code>glRotate(angle, x, y, z)</code>.
+     *
+     * @param angle Angle of rotation in degrees
+     * @param x     x coordinate of the rotation vector
+     * @param y     y coordinate of the rotation vector
+     * @param z     z coordinate of the rotation vector
+     */
+    public void rotate(float angle, float x, float y, float z) {
+        float c = (float) Math.cos(Math.toRadians(angle));
+        float s = (float) Math.sin(Math.toRadians(angle));
+        Vector3f vec = new Vector3f(x, y, z);
+        if (vec.length() != 1f) {
+            vec = vec.normalize();
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
+
+        m00 = x * x * (1f - c) + c;
+        m10 = y * x * (1f - c) + z * s;
+        m20 = x * z * (1f - c) - y * s;
+        m01 = x * y * (1f - c) - z * s;
+        m11 = y * y * (1f - c) + c;
+        m21 = y * z * (1f - c) + x * s;
+        m02 = x * z * (1f - c) + y * s;
+        m12 = y * z * (1f - c) - x * s;
+        m22 = z * z * (1f - c) + c;
+
     }
 
     /**
