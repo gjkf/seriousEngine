@@ -37,6 +37,7 @@ public class Vector2f {
 
     public float x;
     public float y;
+    private float limit;
 
     /**
      * Creates a default 2-tuple vector with all values set to 0.
@@ -76,6 +77,16 @@ public class Vector2f {
     }
 
     /**
+     * Limits the vector length
+     *
+     * @param limit The limit
+     */
+
+    public void limit(float limit){
+        this.limit = limit;
+    }
+
+    /**
      * Normalizes the vector.
      *
      * @return Normalized vector
@@ -89,13 +100,27 @@ public class Vector2f {
      * Adds this vector to another vector.
      *
      * @param other The other vector
-     *
-     * @return Sum of this + other
      */
-    public Vector2f add(Vector2f other) {
-        float x = this.x + other.x;
-        float y = this.y + other.y;
-        return new Vector2f(x, y);
+    public void add(Vector2f other) {
+        if(other.x > 0){
+            if(x+other.x < limit){
+                this.x += other.x;
+            }
+        }else{
+            if(x+other.x > -limit){
+                this.x += other.x;
+            }
+        }
+
+        if(other.y > 0){
+            if(y+other.y < limit){
+                this.y += other.y;
+            }
+        }else{
+            if(y+other.y > -limit){
+                this.y += other.y;
+            }
+        }
     }
 
     /**
@@ -111,11 +136,9 @@ public class Vector2f {
      * Subtracts this vector from another vector.
      *
      * @param other The other vector
-     *
-     * @return Difference of this - other
      */
-    public Vector2f subtract(Vector2f other) {
-        return this.add(other.negate());
+    public void subtract(Vector2f other) {
+        this.add(other.negate());
     }
 
     /**
@@ -159,11 +182,9 @@ public class Vector2f {
      *
      * @param other The other vector
      * @param alpha The alpha value, must be between 0.0 and 1.0
-     *
-     * @return Linear interpolated vector
      */
-    public Vector2f lerp(Vector2f other, float alpha) {
-        return this.scale(1f - alpha).add(other.scale(alpha));
+    public void lerp(Vector2f other, float alpha) {
+        this.scale(1f - alpha).add(other.scale(alpha));
     }
 
     /**
