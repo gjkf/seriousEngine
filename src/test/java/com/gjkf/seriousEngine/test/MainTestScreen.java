@@ -9,7 +9,6 @@ import com.gjkf.seriousEngine.core.controls.Keys;
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.GuiButton;
 import com.gjkf.seriousEngine.core.gui.GuiScreenWidget;
-import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Image;
 import com.gjkf.seriousEngine.core.render.Renderer;
 
@@ -38,7 +37,7 @@ public class MainTestScreen extends GuiScreenWidget{
 	@Override
 	public void drawBackground(){
 //        // Map to set the variables for the shader
-//		HashMap<String, Object> m = new HashMap<>();
+//		HashMap<String, Ogbject> m = new HashMap<>();
 //		m.put("uResolution", new Vector2f(590, 490));
 //		m.put("uStartingColor", new Vector4f(1f, .6f, .0f, 1f));
 //        m.put("uEndingColor", new Vector4f(0f, .6f, .6f, 1f));
@@ -53,8 +52,16 @@ public class MainTestScreen extends GuiScreenWidget{
 //                }
 //                );
         // Draws the top-left region of the image with an overlay color
-        image = Image.loadImage("textures/lwjgl32.png");
-        Renderer.drawImageRegion(image, 300, 500, 0, 0, 32, 32, Colors.WHITE.color, a++);
+        image = Image.loadImage("textures/multiTest.png");
+        Renderer.drawImageRegion(image, 100, 500, 0, 0, 32, 32);
+        image = Image.loadImage("textures/multiTest.png");
+        Renderer.drawImageRegion(image, 200, 500, 32, 0, 32, 32);
+        image = Image.loadImage("textures/multiTest.png");
+        Renderer.drawImageRegion(image, 300, 500, 64, 0, 32, 32);
+        image = Image.loadImage("textures/multiTest.png");
+        Renderer.drawImageRegion(image, 400, 500, 98, 0, 32, 32);
+        image = Image.loadImage("textures/Globe.png");
+        Renderer.drawImageRegion(image, 500, 100, 400, 0, 500, 500);
         // Sets the font
         // Draws text with the font
 //        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color);
