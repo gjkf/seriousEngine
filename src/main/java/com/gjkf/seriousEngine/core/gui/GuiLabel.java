@@ -17,7 +17,7 @@ public class GuiLabel extends GuiWidget{
 	private float scale;
 	private Color3f color;
 
-	public GuiLabel(int x, int y, float scale, Color3f color, String text){
+	public GuiLabel(float x, float y, float scale, Color3f color, String text){
 		// Why isn't there a height in the class but there is in the Javadoc?
 		super(x, y, (int)(STBEasyFont.stb_easy_font_width(text)*scale), (int)(12*scale), null);
 		this.text = text;

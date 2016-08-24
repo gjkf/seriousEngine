@@ -19,7 +19,7 @@ public abstract class GuiScreenWidget extends GuiWidget{
 
 	public ArrayList<GuiWidget> widgets;
 
-	public GuiScreenWidget(int width, int height){
+	public GuiScreenWidget(float width, float height){
 		super(0, 0, width, height, null);
 		widgets = new ArrayList<>();
 	}

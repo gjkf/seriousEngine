@@ -21,17 +21,17 @@ public class GuiButton extends GuiWidget{
 	private String text;
 	private float scale;
 
-	public GuiButton(int x, int y, String text, float scale, MouseListener listener){
+	public GuiButton(float x, float y, String text, float scale, MouseListener listener){
         super(x, y,
                 (
                         (Renderer.getFont() == null) ?
-                        (int)(STBEasyFont.stb_easy_font_width(text)*scale) :
-                        (int)(scale*text.length())
+                        (STBEasyFont.stb_easy_font_width(text)*scale) :
+                        (scale*text.length())
                 ),
                 (
                         (Renderer.getFont() == null) ?
-                        (int)(12*scale) :
-                        (int)(scale)
+                        (12*scale) :
+                        (scale)
                 ),
                 listener);
 		this.text = text;

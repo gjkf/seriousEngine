@@ -17,11 +17,11 @@ import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiWidget{
 
-	public int x, y, width, height;
+	public float x, y, width, height;
 	public MouseListener listener;
     public boolean debug = false;
 
-	public GuiWidget(int x, int y, int width, int height, MouseListener mouseListener){
+	public GuiWidget(float x, float y, float width, float height, MouseListener mouseListener){
 		this.x = x;
 		this.y = y;
 		this.width = width;
