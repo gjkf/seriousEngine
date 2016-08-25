@@ -32,6 +32,7 @@ public abstract class GuiScreenWidget extends GuiWidget{
 
 	public void add(GuiWidget widget){
 		widgets.add(widget);
+        widget.setParent(this);
 	}
 
 	/**

@@ -388,10 +388,13 @@ public class Renderer{
      * Draws the currently bound texture on specified coordinates and with
      * specified color.
      *
-     * @param image Used for getting width and height of the texture
-     * @param x       X position of the texture
-     * @param y       Y position of the texture
+     * @param image The image to be drawn
+     * @param x The x coordinate of the image
+     * @param y The y coordinate of the image
+     * @param width The width of the image
+     * @param height The height of the image
      */
+
     public static void drawImage(Image image, float x, float y, float width, float height) {
         drawImage(image, x, y, width, height, Colors.WHITE.color);
     }
@@ -400,11 +403,14 @@ public class Renderer{
      * Draws the currently bound texture on specified coordinates and with
      * specified color.
      *
-     * @param image Used for getting width and height of the texture
-     * @param x       X position of the texture
-     * @param y       Y position of the texture
+     * @param image The image to be drawn
+     * @param x The x of the image
+     * @param y The y of the image
+     * @param width The width of the image
+     * @param height The height of the image
      * @param color The fill color
      */
+
     public static void drawImage(Image image, float x, float y, float width, float height, Color3f color) {
         /* Vertex positions */
         float x2 = x + width;
@@ -502,6 +508,7 @@ public class Renderer{
      * @param t1 Bottom left t coordinate
      * @param s2 Top right s coordinate
      * @param t2 Top right t coordinate
+     * @param color The fill color
      */
 
     public static void drawImageRegion(Image image, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color3f color){
@@ -512,6 +519,7 @@ public class Renderer{
      * Draws a texture region with the currently bound texture on specified
      * coordinates.
      *
+     * @param image The image
      * @param x1 Bottom left x position
      * @param y1 Bottom left y position
      * @param x2 Top right x position
@@ -520,6 +528,7 @@ public class Renderer{
      * @param t1 Bottom left t coordinate
      * @param s2 Top right s coordinate
      * @param t2 Top right t coordinate
+     * @param color The fill color
      * @param angle The rotation angle in degrees
      */
 

@@ -20,6 +20,7 @@ public abstract class GuiWidget{
 	public float x, y, width, height;
 	public MouseListener listener;
     public boolean debug = false;
+    public GuiScreenWidget parent;
 
 	public GuiWidget(float x, float y, float width, float height, MouseListener mouseListener){
 		this.x = x;
@@ -73,4 +74,11 @@ public abstract class GuiWidget{
 		}
 	}
 
+    public GuiScreenWidget getParent(){
+        return parent;
+    }
+
+    public void setParent(GuiScreenWidget parent){
+        this.parent = parent;
+    }
 }

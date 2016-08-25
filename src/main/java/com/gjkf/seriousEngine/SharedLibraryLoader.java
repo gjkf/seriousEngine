@@ -25,7 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * 	Loads shared libraries from JAR files. Call {@link SharedLibraryLoader#load() to load the
+ * 	Loads shared libraries from JAR files. Call {@link SharedLibraryLoader#load()} to load the
  * 	required LWJGL 3 native shared libraries.
  * 	@author mzechner
  * 	@author Nathan Sweet
@@ -76,7 +76,11 @@ public class SharedLibraryLoader{
 		load(false);
 	}
 
-	/** Extracts the LWJGL native libraries from the classpath and sets the "org.lwjgl.librarypath" system property. */
+	/**
+     * Extracts the LWJGL native libraries from the classpath and sets the "org.lwjgl.librarypath" system property.
+     *
+     * @param disableOpenAL Whether or not disable OpenAL
+     */
 	static public synchronized void load (boolean disableOpenAL) {
 		if (!load) return;
 
@@ -109,13 +113,20 @@ public class SharedLibraryLoader{
 	public SharedLibraryLoader() {
 	}
 
-	/** Fetches the natives from the given natives jar file. Used for testing a shared lib on the fly.
-	 * @param nativesJar */
+	/**
+     * Fetches the natives from the given natives jar file. Used for testing a shared lib on the fly.
+	 *
+     * @param nativesJar The jar files
+     */
 	public SharedLibraryLoader(String nativesJar) {
 		this.nativesJar = nativesJar;
 	}
 
-	/** Returns a CRC of the remaining bytes in the stream. */
+	/**
+     * Returns a CRC of the remaining bytes in the stream.
+     *
+     * @param input The input
+     */
 	public String crc (InputStream input) {
 		if (input == null) throw new IllegalArgumentException("input cannot be null.");
 		CRC32 crc = new CRC32();
@@ -127,17 +138,19 @@ public class SharedLibraryLoader{
 				crc.update(buffer, 0, length);
 			}
 		} catch (Exception ex) {
-			if(input != null) {
-				try {
-					input.close();
-				} catch (IOException ignored) {
-				}
-			}
-		}
+            try {
+                input.close();
+            } catch (IOException ignored) {
+            }
+        }
 		return Long.toString(crc.getValue(), 16);
 	}
 
-	/** Maps a platform independent library name to a platform dependent name. */
+	/**
+     * Maps a platform independent library name to a platform dependent name.
+     *
+     * @param libraryName The library name
+     */
 	public String mapLibraryName (String libraryName) {
 		if (isWindows) return libraryName + (is64Bit ? "64.dll" : ".dll");
 		if (isLinux) return "lib" + libraryName + (isARM ? "arm" + abi : "") + (is64Bit ? "64.so" : ".so");
@@ -166,7 +179,7 @@ public class SharedLibraryLoader{
 		loadedLibraries.add(libraryName);
 	}
 
-	private InputStream readFile (String path) {
+	private InputStream readFile (String path) throws IOException{
 		if (nativesJar == null) {
 			InputStream input = SharedLibraryLoader.class.getResourceAsStream("/" + path);
 			if (input == null) throw new RuntimeException("Unable to read file for extraction: " + path);
@@ -310,7 +323,7 @@ public class SharedLibraryLoader{
 
 	/** Extracts the source file and calls System.load. Attemps to extract and load from multiple locations. Throws runtime
 	 * exception if all fail. */
-	private void loadFile (String sourcePath) {
+	private void loadFile (String sourcePath) throws IOException{
 		String sourceCrc = crc(readFile(sourcePath));
 
 		String fileName = new File(sourcePath).getName();
