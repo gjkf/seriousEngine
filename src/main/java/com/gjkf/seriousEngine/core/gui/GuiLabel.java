@@ -13,9 +13,28 @@ import org.lwjgl.stb.STBEasyFont;
 
 public class GuiLabel extends GuiWidget{
 
+    /**
+     * The text to be displayed
+     */
 	private String text;
+    /**
+     * The scale of the text if {@link Renderer#getFont()} is null, else the size of the text
+     */
 	private float scale;
+    /**
+     * The text color
+     */
 	private Color3f color;
+
+    /**
+     * The label constructor
+     *
+     * @param x The x coordinate of the label
+     * @param y The y coordinate of the label
+     * @param scale The scale
+     * @param color The text color
+     * @param text The text
+     */
 
 	public GuiLabel(float x, float y, float scale, Color3f color, String text){
 		// Why isn't there a height in the class but there is in the Javadoc?

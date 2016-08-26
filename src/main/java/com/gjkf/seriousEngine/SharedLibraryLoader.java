@@ -126,6 +126,8 @@ public class SharedLibraryLoader{
      * Returns a CRC of the remaining bytes in the stream.
      *
      * @param input The input
+     *
+     * @return The crc
      */
 	public String crc (InputStream input) {
 		if (input == null) throw new IllegalArgumentException("input cannot be null.");
@@ -150,6 +152,8 @@ public class SharedLibraryLoader{
      * Maps a platform independent library name to a platform dependent name.
      *
      * @param libraryName The library name
+     *
+     * @return The library name
      */
 	public String mapLibraryName (String libraryName) {
 		if (isWindows) return libraryName + (is64Bit ? "64.dll" : ".dll");
@@ -205,11 +209,17 @@ public class SharedLibraryLoader{
 		}
 	}
 
-	/** Extracts the specified file into the temp directory if it does not already exist or the CRC does not match. If file
+	/**
+     * Extracts the specified file into the temp directory if it does not already exist or the CRC does not match. If file
 	 * extraction fails and the file exists at java.library.path, that file is returned.
-	 * @param sourcePath The file to extract from the classpath or JAR.
+	 *
+     * @param sourcePath The file to extract from the classpath or JAR.
 	 * @param dirName The name of the subdirectory where the file will be extracted. If null, the file's CRC will be used.
-	 * @return The extracted file. */
+	 *
+     * @return The extracted file.
+     *
+     * @throws IOException If the file does not exist
+     */
 	public File extractFile (String sourcePath, String dirName) throws IOException {
 		try {
 			String sourceCrc = crc(readFile(sourcePath));

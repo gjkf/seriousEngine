@@ -56,6 +56,14 @@ public class MouseInput{
 		};
 	}
 
+    /**
+     * Checks if the given mouse button is pressed
+     *
+     * @param btn The button
+     *
+     * @return TRUE if it is pressed
+     */
+
 	public static boolean isPressed(int btn){
 		return glfwGetMouseButton(SeriousEngine.window.window, btn) == GLFW_PRESS;
 	}

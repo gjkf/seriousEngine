@@ -17,8 +17,14 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 
 public class SeriousEngine{
 
-	private GLFWMouseButtonCallback mouseButtonCallback;
-
+    /**
+     * The mouseCallback
+     */
+    private GLFWMouseButtonCallback mouseButtonCallback;
+    /**
+     * The current running directory.
+     * Used to load internal files
+     */
 	public static ClassLoader runningDirectory;
 
 	/**

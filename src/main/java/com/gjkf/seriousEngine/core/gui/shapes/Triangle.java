@@ -9,10 +9,20 @@ import com.gjkf.seriousEngine.core.render.Color3f;
 import com.gjkf.seriousEngine.core.render.Renderer;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * A class representing a triangle.
+ * <p>Extends {@link GuiWidget} so can be used directly in {@link com.gjkf.seriousEngine.core.gui.GuiScreenWidget}</p>
+ */
+
 public class Triangle extends GuiWidget{
 
-	private int x, y, width, height;
-	private Point2i[] vertices;
+    /**
+     * An array of points containing the 3 vertices
+     */
+    private Point2i[] vertices;
+    /**
+     * The fill color
+     */
 	private Color3f color;
 
 	/**

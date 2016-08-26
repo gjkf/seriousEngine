@@ -3,10 +3,20 @@
  */
 package com.gjkf.seriousEngine.core.gui.shapes;
 
+/**
+ * A class representing a point
+ */
+
 public class Point2i{
 
-	public final int x;
-	public final int y;
+    /**
+     * The x Coordinate
+     */
+    public final int x;
+    /**
+     * The y coordinate
+     */
+    public final int y;
 
 	public Point2i(int x, int y){
 		this.x = x;

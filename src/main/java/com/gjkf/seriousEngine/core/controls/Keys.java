@@ -15,15 +15,18 @@ import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
 public class Keys{
 
+    /**
+     * Array containing all the key callbacks that need to be registered
+     */
     private static ArrayList<GLFWKeyCallback> array = new ArrayList<>();
 
     /**
-     * Use this with a Lambda expression:
-     * <p>
-     * (long w,int key, int code, int action, int mods) -> {//CODE HERE} }
+     * Registers a new key callback.
+     * <p>Use this with a Lambda expression:<p>
+     * (long w,int key, int code, int action, int mods)
      *
-     * @param window
-     * @param keyCallback
+     * @param window The window that needs focus
+     * @param keyCallback The callback
      */
 
 	public static void registerKeys(long window, KeyCallback keyCallback){
@@ -36,13 +39,30 @@ public class Keys{
 	    GLFW.glfwSetKeyCallback(window, array.get(array.size()-1));
 	}
 
+    /**
+     * Checks if the given key is pressed
+     *
+     * @param key The key to check
+     *
+     * @return TRUE if it is pressed
+     */
+
 	public static boolean isPressed(int key){
 		return glfwGetKey(SeriousEngine.window.window, key) == GLFW_PRESS;
 	}
 
+    /**
+     * Destroys the callbacks stored in {@link #array}
+     */
+
 	public static void destroyCallback(){
         array.forEach(Retainable.Default::release);
     }
+
+    /**
+     * Interface representing the key callback.
+     * <p>Has only 1 method that is invoked in {@link #registerKeys(long, KeyCallback)}</p>
+     */
 
 	@FunctionalInterface
 	public interface KeyCallback{

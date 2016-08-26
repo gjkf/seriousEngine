@@ -15,10 +15,29 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 
+/**
+ * An image object.
+ * <p>Load new images with {@link #loadImage(String)}</p>
+ */
+
 public class Image{
 
+    /**
+     * The buffer for the image
+     */
     private ByteBuffer image;
+    /**
+     * Dimensions and texture ID
+     */
     private int width, height, id;
+
+    /**
+     * The image constructor
+     *
+     * @param width The width
+     * @param height The height
+     * @param data The data of the image
+     */
 
     private Image(int width, int height, ByteBuffer data){
         this.id = glGenTextures();
@@ -38,21 +57,54 @@ public class Image{
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     }
 
+    /**
+     * Returns the texture ID
+     *
+     * @return The ID
+     */
+
     public int getID(){
         return id;
     }
+
+    /**
+     * Returns the width
+     *
+     * @return The width
+     */
 
     public int getWidth(){
         return width;
     }
 
+    /**
+     * Returns the height
+     *
+     * @return The height
+     */
+
     public int getHeight(){
         return height;
     }
 
+    /**
+     * Returns the image buffer
+     *
+     * @return The buffer
+     */
+
     public ByteBuffer getImage(){
         return image;
     }
+
+    /**
+     * Loads an image and returns a new object.
+     * <p>The path is relative to the current resources folder</p>
+     *
+     * @param path The path from where to load the image
+     *
+     * @return The newly loaded image
+     */
 
     public static Image loadImage(String path){
         InputStream in;

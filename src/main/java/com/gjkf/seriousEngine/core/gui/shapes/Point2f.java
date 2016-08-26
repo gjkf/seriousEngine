@@ -3,9 +3,19 @@
  */
 package com.gjkf.seriousEngine.core.gui.shapes;
 
+/**
+ * Class representing a point.
+ */
+
 public class Point2f{
 
+    /**
+     * The x Coordinate
+     */
     public final float x;
+    /**
+     * The y coordinate
+     */
     public final float y;
 
     public Point2f(float x, float y){

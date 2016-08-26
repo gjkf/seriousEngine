@@ -12,6 +12,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
+/**
+ * Util class to handle file operations
+ */
+
 public class FileUtil{
 
     /**
@@ -98,6 +102,15 @@ public class FileUtil{
         buffer.flip();
         return buffer;
     }
+
+    /**
+     * Resizes the given buffer
+     *
+     * @param buffer The old buffer
+     * @param cap The new cap
+     *
+     * @return The newly capped buffer
+     */
 
     public static ByteBuffer resizeBuffer(ByteBuffer buffer, int cap){
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(cap);

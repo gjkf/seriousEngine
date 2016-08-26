@@ -500,6 +500,7 @@ public class Renderer{
      * Draws a texture region with the currently bound texture on specified
      * coordinates.
      *
+     * @param image The image
      * @param x1 Bottom left x position
      * @param y1 Bottom left y position
      * @param x2 Top right x position

@@ -17,7 +17,18 @@ import java.util.ArrayList;
 
 public abstract class GuiScreenWidget extends GuiWidget{
 
+    /**
+     * Array containing all the widgets.
+     * Add new ones with {@link #add(GuiWidget)}
+     */
 	public ArrayList<GuiWidget> widgets;
+
+    /**
+     * The screen constructor
+     *
+     * @param width The width
+     * @param height The height
+     */
 
 	public GuiScreenWidget(float width, float height){
 		super(0, 0, width, height, null);

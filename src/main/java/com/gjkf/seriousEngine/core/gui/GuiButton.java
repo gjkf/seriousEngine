@@ -18,8 +18,24 @@ import org.lwjgl.stb.STBEasyFont;
 
 public class GuiButton extends GuiWidget{
 
+    /**
+     * The text to be displayed
+     */
 	private String text;
+    /**
+     * The scale of the text if {@link Renderer#getFont()} is null, else the size of the text
+     */
 	private float scale;
+
+    /**
+     * Button constructor
+     *
+     * @param x The x coordinate of the button
+     * @param y The y coordinate of the button
+     * @param text The text
+     * @param scale The scale
+     * @param listener The callback function to be called when pressed
+     */
 
 	public GuiButton(float x, float y, String text, float scale, MouseListener listener){
         super(x, y,

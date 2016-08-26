@@ -17,10 +17,32 @@ import org.lwjgl.glfw.GLFW;
 
 public abstract class GuiWidget{
 
+    /**
+     * Coordinates and dimensions
+     */
 	public float x, y, width, height;
+    /**
+     * The {@link MouseListener} that is called when the widget is pressed
+     */
 	public MouseListener listener;
+    /**
+     * If set to true will display a green grid to see the positioning
+     */
     public boolean debug = false;
+    /**
+     * The parent screen
+     */
     public GuiScreenWidget parent;
+
+    /**
+     * The widget constructor
+     *
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param width The width
+     * @param height The height
+     * @param mouseListener The mouse listener
+     */
 
 	public GuiWidget(float x, float y, float width, float height, MouseListener mouseListener){
 		this.x = x;
@@ -74,9 +96,21 @@ public abstract class GuiWidget{
 		}
 	}
 
+    /**
+     * Returns the parent screen
+     *
+     * @return The parent screen
+     */
+
     public GuiScreenWidget getParent(){
         return parent;
     }
+
+    /**
+     * Sets the parent of this widget
+     *
+     * @param parent The new parent
+     */
 
     public void setParent(GuiScreenWidget parent){
         this.parent = parent;
