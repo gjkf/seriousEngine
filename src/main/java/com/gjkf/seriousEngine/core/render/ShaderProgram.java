@@ -3,7 +3,10 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
-import com.gjkf.seriousEngine.core.math.*;
+import org.joml.*;
+import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -128,7 +131,8 @@ public class ShaderProgram {
      * @param value    Value to set
      */
     public void setUniform(int location, Vector2f value) {
-        glUniform2fv(location, value.getBuffer());
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glUniform2fv(location, value.get(buffer));
     }
 
     /**
@@ -138,7 +142,8 @@ public class ShaderProgram {
      * @param value    Value to set
      */
     public void setUniform(int location, Vector3f value) {
-        glUniform3fv(location, value.getBuffer());
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glUniform3fv(location, value.get(buffer));
     }
 
     /**
@@ -148,17 +153,8 @@ public class ShaderProgram {
      * @param value    Value to set
      */
     public void setUniform(int location, Vector4f value) {
-        glUniform4fv(location, value.getBuffer());
-    }
-
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value    Value to set
-     */
-    public void setUniform(int location, Matrix2f value) {
-        glUniformMatrix2fv(location, false, value.getBuffer());
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glUniform4fv(location, value.get(buffer));
     }
 
     /**
@@ -169,7 +165,8 @@ public class ShaderProgram {
      */
 
     public void setUniform(int location, Matrix3f value) {
-        glUniformMatrix3fv(location, false, value.getBuffer());
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glUniformMatrix3fv(location, false, value.get(buffer));
     }
 
     /**
@@ -179,7 +176,8 @@ public class ShaderProgram {
      * @param value    Value to set
      */
     public void setUniform(int location, Matrix4f value) {
-        glUniformMatrix4fv(location, false, value.getBuffer());
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glUniformMatrix4fv(location, false, value.get(buffer));
     }
 
     /**

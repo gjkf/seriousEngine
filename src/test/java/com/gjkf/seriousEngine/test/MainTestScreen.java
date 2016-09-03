@@ -9,6 +9,7 @@ import com.gjkf.seriousEngine.core.controls.Keys;
 import com.gjkf.seriousEngine.core.controls.MouseInput;
 import com.gjkf.seriousEngine.core.gui.GuiButton;
 import com.gjkf.seriousEngine.core.gui.GuiScreenWidget;
+import com.gjkf.seriousEngine.core.render.Colors;
 import com.gjkf.seriousEngine.core.render.Image;
 import com.gjkf.seriousEngine.core.render.Renderer;
 
@@ -44,24 +45,17 @@ public class MainTestScreen extends GuiScreenWidget{
 //        m.put("uDirection", 0);
 //        Renderer.loadShader(
 //                "shaders/defaultVertex.glsl", // Sets the vertex position
-//                "shaders/gradient.glsl", // Sets the red fragment color, the problem is that it sets it for all things
+//                "shaders/gradient.glsl", // Sets the fragment color
 //				m,
 //                () -> {
 ////                    Renderer.drawRect(0, 0, 100, 100, Colors.NULL.color);
 //                    Renderer.drawArray(new float[]{150,150, 250,420, 600,500}, Colors.GREEN.color, GL11.GL_TRIANGLES);
 //                }
 //                );
-        // Draws the top-left region of the image with an overlay color
-        image = Image.loadImage("textures/multiTest.png");
-        Renderer.drawImageRegion(image, 100, 500, 0, 0, 32, 32);
-        image = Image.loadImage("textures/multiTest.png");
-        Renderer.drawImageRegion(image, 200, 500, 32, 0, 32, 32);
-        image = Image.loadImage("textures/multiTest.png");
-        Renderer.drawImageRegion(image, 300, 500, 64, 0, 32, 32);
-        image = Image.loadImage("textures/multiTest.png");
-        Renderer.drawImageRegion(image, 400, 500, 98, 0, 32, 32);
-        image = Image.loadImage("textures/Globe.png");
-        Renderer.drawImageRegion(image, 500, 100, 400, 0, 500, 500);
+
+        image = Image.loadImage("textures/lwjgl32.png");
+        Renderer.drawImageRegion(image, 300, 500, 0, 0, 32, 32, Colors.WHITE.color, a++);
+
         // Sets the font
         // Draws text with the font
 //        Renderer.drawText(100, 200, "This is some sample text with font", 30, Colors.RED.color);

@@ -3,8 +3,8 @@
  */
 package com.gjkf.seriousEngine.core.render;
 
-import com.gjkf.seriousEngine.core.math.*;
 import com.gjkf.seriousEngine.core.util.FileUtil;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -255,7 +255,7 @@ public class Renderer{
         program.setUniform(uniView, view);
 
         /* Set projection matrix to an orthographic projection */
-        Matrix4f projection = Matrix4f.orthographic(0f, width, height, 0, -1f, 1f);
+        Matrix4f projection = new Matrix4f().ortho(0f, width, height, 0, -1f, 1f);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
 
@@ -302,7 +302,7 @@ public class Renderer{
         program.setUniform(uniView, view);
 
         /* Set projection matrix to an orthographic projection */
-        Matrix4f projection = Matrix4f.orthographic(0f, width, height, 0, -1f, 1f);
+        Matrix4f projection = new Matrix4f().ortho(0f, width, height, 0, -1f, 1f);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
 
@@ -310,9 +310,7 @@ public class Renderer{
 
         map.forEach((key, value) -> {
             int target = finalProgram.getUniformLocation(key);
-            if(value instanceof Matrix2f)
-                finalProgram.setUniform(target, (Matrix2f) value);
-            else if(value instanceof Matrix3f)
+            if(value instanceof Matrix3f)
                 finalProgram.setUniform(target, (Matrix3f) value);
             else if(value instanceof Matrix4f)
                 finalProgram.setUniform(target, (Matrix4f) value);
@@ -589,10 +587,10 @@ public class Renderer{
         program.setUniform(uniTex, 0);
 
         /* Set model matrix to identity matrix */
-        Matrix4f m1 = Matrix4f.translateStatic(-(x1 + x2) / 2, -(y1 + y2) / 2, 0);
-        Matrix4f m2 = Matrix4f.rotateStatic(angle, 0, 0, 1);
-        Matrix4f m3 = Matrix4f.translateStatic((x1 + x2) / 2, (y1 + y2) / 2, 0);
-        Matrix4f model = m3.multiply(m2).multiply(m1);
+        float tx = (x1 + x2) / 2;
+        float ty = (y1 + y2) / 2;
+        Matrix4f model = new Matrix4f().translate(tx, ty, 0).rotateZ((float) Math.toRadians(angle)).translate(-tx, -ty, 0);
+
         int uniModel = program.getUniformLocation("model");
         program.setUniform(uniModel, model);
 
@@ -602,7 +600,7 @@ public class Renderer{
         program.setUniform(uniView, view);
 
         /* Set projection matrix to an orthographic projection */
-        Matrix4f projection = Matrix4f.orthographic(0f, w, h, 0f, -1f, 1f);
+        Matrix4f projection = new Matrix4f().ortho(0f, w, h, 0f, -1f, 1f);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
 
