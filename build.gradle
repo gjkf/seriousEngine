@@ -1,5 +1,19 @@
+import org.gradle.internal.os.OperatingSystem
+
+switch ( OperatingSystem.current() ) {
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+}
+
 group 'com.gjkf'
-version '0.3'
+version '0.5'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -15,13 +29,10 @@ sourceSets{
     }
 }
 
-project.ext.lwjglVersion = "3.0.0a"
-
-mainClassName = "com.gjkf.seriousEngine.test. MainTestScreen"
+project.ext.lwjglVersion = "3.1.0"
 
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 task wrapper(type: Wrapper) {
@@ -29,11 +40,20 @@ task wrapper(type: Wrapper) {
 }
 
 dependencies {
+    // LWJGL dependencies START
     compile "org.lwjgl:lwjgl:${lwjglVersion}"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-openal:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-stb:${lwjglVersion}"
+    // LWJGL natives
+    runtime "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
+    // LWJGL dependencies END
     compile "org.joml:joml:1.8.2"
+    compile "org.l33tlabs.twl:pngdecoder:1.0"
 }
 
 // add source jar
