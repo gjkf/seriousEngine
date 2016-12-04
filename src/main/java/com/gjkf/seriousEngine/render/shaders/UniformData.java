@@ -7,7 +7,7 @@ package com.gjkf.seriousEngine.render.shaders;
 import java.nio.FloatBuffer;
 
 /**
- * Simple place holder class used with shaders.
+ * Simple place holder class used with engineShaders.
  */
 
 public class UniformData{

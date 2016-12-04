@@ -6,16 +6,15 @@ package com.gjkf.seriousEngine.test;
 import com.gjkf.seriousEngine.ILogic;
 import com.gjkf.seriousEngine.MouseInput;
 import com.gjkf.seriousEngine.Window;
-import com.gjkf.seriousEngine.items.Item;
+import com.gjkf.seriousEngine.items.SkyBox;
 import com.gjkf.seriousEngine.items.Terrain;
-import com.gjkf.seriousEngine.loaders.md5.MD5AnimModel;
-import com.gjkf.seriousEngine.loaders.md5.MD5Loader;
-import com.gjkf.seriousEngine.loaders.md5.MD5Model;
 import com.gjkf.seriousEngine.loaders.obj.OBJLoader;
 import com.gjkf.seriousEngine.render.*;
-import com.gjkf.seriousEngine.render.anim.AnimItem;
 import com.gjkf.seriousEngine.render.lights.DirectionalLight;
 import com.gjkf.seriousEngine.render.lights.SceneLight;
+import com.gjkf.seriousEngine.render.particles.FlowParticleEmitter;
+import com.gjkf.seriousEngine.render.particles.Particle;
+import com.gjkf.seriousEngine.render.weather.Fog;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -35,15 +34,15 @@ public class DummyGame implements ILogic{
 
     private Hud hud;
 
+    private static final float CAMERA_POS_STEP = 0.10f;
+
     private Terrain terrain;
 
     private float angleInc;
 
     private float lightAngle;
 
-    private AnimItem bob;
-
-    private static final float CAMERA_POS_STEP = 0.05f;
+    private FlowParticleEmitter particleEmitter;
 
     public DummyGame(){
         renderer = new Renderer();
@@ -61,25 +60,48 @@ public class DummyGame implements ILogic{
 
         float reflectance = 1f;
 
-        Mesh quadMesh = OBJLoader.loadMesh("/models/plane.obj");
-        Material quadMaterial = new Material(Colors.BLUE.toVector(), reflectance);
-        quadMesh.setMaterial(quadMaterial);
-        Item quadItem = new Item(quadMesh);
-        quadItem.setPosition(0, 0, 0);
-        quadItem.setScale(2.5f);
+        float terrainScale = 10;
+        int terrainSize = 3;
+        float minY = -0.1f;
+        float maxY = 0.1f;
+        int textInc = 40;
+        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "/textures/heightmap.png", "/textures/terrain.png", textInc);
 
-        // Setup  GameItems
-        MD5Model md5Meshodel = MD5Model.parse("/models/monster/monster.md5mesh");
-        MD5AnimModel md5AnimModel = MD5AnimModel.parse("/models/monster/monster.md5anim");
-//        MD5Model md5Meshodel = MD5Model.parse("/models/bob/boblamp.md5mesh");
-//        MD5AnimModel md5AnimModel = MD5AnimModel.parse("/models/bob/boblamp.md5anim");
+        scene.setItems(terrain.getItems());
 
-        bob = MD5Loader.process(md5Meshodel, md5AnimModel, Colors.WHITE.toVector());
-        bob.setScale(0.05f);
-        bob.setRotation(90, 0, 90);
-        //monster.setRotation(90, 0, 0);
+        // Particles
+        int maxParticles = 200;
+        Vector3f particleSpeed = new Vector3f(0, 1, 0);
+        particleSpeed.mul(2.5f);
+        long ttl = 4000;
+        long creationPeriodMillis = 300;
+        float range = 0.2f;
+        float scale = 0.2f;
+        Mesh partMesh = OBJLoader.loadMesh("/engineModels/particle.obj", maxParticles);
+        Texture particleTexture = new Texture("/textures/particle_anim.png", 4, 4);
+        Material partMaterial = new Material(particleTexture, reflectance);
+        partMesh.setMaterial(partMaterial);
+        Particle particle = new Particle(partMesh, particleSpeed, ttl, 100);
+        particle.setScale(scale);
+        particle.setPosition(0, 5, 0);
+        particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+        particleEmitter.setActive(true);
+        particleEmitter.setPositionRndRange(range);
+        particleEmitter.setSpeedRndRange(range);
+        particleEmitter.setAnimRange(10);
+        this.scene.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
 
-        scene.setItems(new Item[] {quadItem, bob});
+        // Shadows
+        scene.setRenderShadows(false);
+
+        // Fog
+        Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
+        scene.setFog(new Fog(true, fogColour, 0.02f));
+
+        // Setup  SkyBox
+        SkyBox skyBox = new SkyBox("/engineModels/skybox.obj", new Vector3f(0.65f, 0.65f, 0.65f));
+        skyBox.setScale(100f);
+//        scene.setSkyBox(skyBox);
 
         // Setup Lights
         setupLights();
@@ -89,7 +111,8 @@ public class DummyGame implements ILogic{
         camera.getPosition().z = 6.5f;
         camera.getRotation().x = 25;
         camera.getRotation().y = -1;
-        hud = new Hud("");
+
+        hud = new Hud("DEMO \\ s");
     }
 
     private void setupLights(){
@@ -134,14 +157,11 @@ public class DummyGame implements ILogic{
         }else{
             angleInc = 0;
         }
-        if(window.isKeyPressed(GLFW_KEY_L)){
-            bob.nextFrame();
-        }
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput){
-        // Update camera based on mouse
+        // Update camera based on mouse            
         if(mouseInput.isLeftButtonPressed()){
             Vector2f rotVec = mouseInput.getDisplVec();
             camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
@@ -170,6 +190,8 @@ public class DummyGame implements ILogic{
         lightDirection.y = yValue;
         lightDirection.z = zValue;
         lightDirection.normalize();
+
+        particleEmitter.update((long) (interval * 1000));
     }
 
     @Override
@@ -188,4 +210,5 @@ public class DummyGame implements ILogic{
             hud.cleanup();
         }
     }
+
 }

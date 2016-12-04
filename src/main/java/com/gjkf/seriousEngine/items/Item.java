@@ -4,6 +4,7 @@
 package com.gjkf.seriousEngine.items;
 
 import com.gjkf.seriousEngine.render.Mesh;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 /**
@@ -27,7 +28,11 @@ public class Item{
     /**
      * The rotation.
      */
-    private final Vector3f rotation;
+    private final Quaternionf rotation;
+    /**
+     * The texture position.
+     */
+    private int textPos;
 
     /**
      * Constructs a new Item.
@@ -36,7 +41,8 @@ public class Item{
     public Item(){
         position = new Vector3f(0, 0, 0);
         scale = 1;
-        rotation = new Vector3f(0, 0, 0);
+        rotation = new Quaternionf();
+        textPos = 0;
     }
 
     /**
@@ -105,22 +111,18 @@ public class Item{
      * @return The rotation.
      */
 
-    public Vector3f getRotation(){
+    public Quaternionf getRotation(){
         return rotation;
     }
 
     /**
      * Sets the rotation.
      *
-     * @param x The rotation on the X axis.
-     * @param y The rotation on the Y axis.
-     * @param z The rotation on the Z axis.
+     * @param q The new rotation.
      */
 
-    public void setRotation(float x, float y, float z){
-        this.rotation.x = x;
-        this.rotation.y = y;
-        this.rotation.z = z;
+    public final void setRotation(Quaternionf q){
+        this.rotation.set(q);
     }
 
     /**
@@ -162,5 +164,25 @@ public class Item{
     public void setMesh(Mesh mesh){
         this.meshes = new Mesh[] {mesh};
     }
+
+    /**
+     * Cleans up the meshes.
+     */
+
+    public void cleanup(){
+        int numMeshes = this.meshes != null ? this.meshes.length : 0;
+        for(int i = 0; i < numMeshes; i++){
+            this.meshes[i].cleanUp();
+        }
+    }
+
+    public void setTextPos(int textPos){
+        this.textPos = textPos;
+    }
+
+    public int getTextPos(){
+        return textPos;
+    }
+
 
 }

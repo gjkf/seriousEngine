@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 /**
  * Object representing a <tt>Shader program</tt>.
- * <p>Provides useful methods to create, set and load shaders.</p>
+ * <p>Provides useful methods to create, set and load engineShaders.</p>
  */
 
 public class ShaderProgram{
@@ -42,7 +42,7 @@ public class ShaderProgram{
      */
     private int geometryShaderId;
     /**
-     * A map containing all the uniforms that will be passed to the shaders.
+     * A map containing all the uniforms that will be passed to the engineShaders.
      */
     private final Map<String, UniformData> uniforms;
 
@@ -450,7 +450,7 @@ public class ShaderProgram{
     }
 
     /**
-     * Links the shaders to the program.
+     * Links the engineShaders to the program.
      *
      * @throws Exception If there has been any problems.
      */

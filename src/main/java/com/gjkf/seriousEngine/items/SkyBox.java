@@ -8,6 +8,7 @@ import com.gjkf.seriousEngine.loaders.obj.OBJLoader;
 import com.gjkf.seriousEngine.render.Material;
 import com.gjkf.seriousEngine.render.Mesh;
 import com.gjkf.seriousEngine.render.Texture;
+import org.joml.Vector3f;
 
 /**
  * Object representing a sky box.
@@ -16,11 +17,20 @@ import com.gjkf.seriousEngine.render.Texture;
 
 public class SkyBox extends Item{
 
-    public SkyBox(String objModel, String textureFile) throws Exception{
+    public SkyBox(String objModel, String textureFile) throws Exception {
         super();
         Mesh skyBoxMesh = OBJLoader.loadMesh(objModel);
-        Texture skyBoxTexture = new Texture(textureFile);
-        skyBoxMesh.setMaterial(new Material(skyBoxTexture, 0.0f));
+        Texture skyBoxtexture = new Texture(textureFile);
+        skyBoxMesh.setMaterial(new Material(skyBoxtexture, 0.0f));
+        setMesh(skyBoxMesh);
+        setPosition(0, 0, 0);
+    }
+
+    public SkyBox(String objModel, Vector3f colour) throws Exception {
+        super();
+        Mesh skyBoxMesh = OBJLoader.loadMesh(objModel);
+        Material material = new Material(colour, 0);
+        skyBoxMesh.setMaterial(material);
         setMesh(skyBoxMesh);
         setPosition(0, 0, 0);
     }

@@ -5,6 +5,7 @@ package com.gjkf.seriousEngine.loaders.obj;
 
 
 import com.gjkf.seriousEngine.Utils;
+import com.gjkf.seriousEngine.render.InstancedMesh;
 import com.gjkf.seriousEngine.render.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -18,17 +19,11 @@ import java.util.List;
 
 public class OBJLoader{
 
-    /**
-     * Loads the mesh from a file.
-     *
-     * @param fileName The path of the file.
-     *
-     * @return The new mesh.
-     *
-     * @throws Exception If anything went wrong.
-     */
-
     public static Mesh loadMesh(String fileName) throws Exception{
+        return loadMesh(fileName, 1);
+    }
+
+    public static Mesh loadMesh(String fileName, int instances) throws Exception{
         List<String> lines = Utils.readAllLines(fileName);
 
         List<Vector3f> vertices = new ArrayList<>();
@@ -71,21 +66,11 @@ public class OBJLoader{
                     break;
             }
         }
-        return reorderLists(vertices, textures, normals, faces);
+        return reorderLists(vertices, textures, normals, faces, instances);
     }
 
-    /**
-     * Reorders the list of information.
-     *
-     * @param posList       The list of the vertices' positions.
-     * @param textCoordList The list of the texture coordinates.
-     * @param normList      The list of the normals.
-     * @param facesList     The list of the faces.
-     *
-     * @return The new mesh.
-     */
-
-    private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList, List<Vector3f> normList, List<Face> facesList){
+    private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
+                                     List<Vector3f> normList, List<Face> facesList, int instances){
 
         List<Integer> indices = new ArrayList<>();
         // Create position array in the order it has been declared
@@ -107,12 +92,19 @@ public class OBJLoader{
                         indices, textCoordArr, normArr);
             }
         }
-        int[] indicesArr;
-        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        return new Mesh(posArr, textCoordArr, normArr, indicesArr);
+        int[] indicesArr = Utils.listIntToArray(indices);
+        Mesh mesh;
+        if(instances > 1){
+            mesh = new InstancedMesh(posArr, textCoordArr, normArr, indicesArr, instances);
+        }else{
+            mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
+        }
+        return mesh;
     }
 
-    private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoordList, List<Vector3f> normList, List<Integer> indicesList, float[] texCoordArr, float[] normArr){
+    private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoordList,
+                                          List<Vector3f> normList, List<Integer> indicesList,
+                                          float[] texCoordArr, float[] normArr){
 
         // Set index for vertex coordinates
         int posIndex = indices.idxPos;
@@ -187,4 +179,5 @@ public class OBJLoader{
             idxVecNormal = NO_VALUE;
         }
     }
+
 }

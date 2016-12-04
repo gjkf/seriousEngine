@@ -7,6 +7,7 @@ package com.gjkf.seriousEngine.render;
 import com.gjkf.seriousEngine.items.Item;
 import com.gjkf.seriousEngine.items.SkyBox;
 import com.gjkf.seriousEngine.render.lights.SceneLight;
+import com.gjkf.seriousEngine.render.particles.IParticleEmitter;
 import com.gjkf.seriousEngine.render.weather.Fog;
 
 import java.util.ArrayList;
@@ -26,6 +27,10 @@ public class Scene{
      */
     private Map<Mesh, List<Item>> meshMap;
     /**
+     * The map containing all the instanced meshes and the corresponding items.
+     */
+    private final Map<InstancedMesh, List<Item>> instancedMeshMap;
+    /**
      * The sky box.
      */
     private SkyBox skyBox;
@@ -37,13 +42,23 @@ public class Scene{
      * The fog.
      */
     private Fog fog;
+    /**
+     * The particle emitters.
+     */
+    private IParticleEmitter[] particleEmitters;
+    /**
+     * Whether or not render shadows.
+     */
+    private boolean renderShadows;
 
     /**
      * Constructs a new Scene.
      */
     public Scene(){
         meshMap = new HashMap<>();
+        instancedMeshMap = new HashMap<>();
         fog = Fog.NOFOG;
+        renderShadows = true;
     }
 
     /**
@@ -63,17 +78,76 @@ public class Scene{
      */
 
     public void setItems(Item[] items){
+        // Create a map of meshes to speed up rendering
         int numItems = items != null ? items.length : 0;
         for(int i = 0; i < numItems; i++){
             Item item = items[i];
-            Mesh mesh = item.getMesh();
-            List<Item> list = meshMap.get(mesh);
-            if(list == null){
-                list = new ArrayList<>();
-                meshMap.put(mesh, list);
+            Mesh[] meshes = item.getMeshes();
+            for(Mesh mesh : meshes){
+                boolean instancedMesh = mesh instanceof InstancedMesh;
+                List<Item> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
+                if(list == null){
+                    list = new ArrayList<>();
+                    if(instancedMesh){
+                        instancedMeshMap.put((InstancedMesh) mesh, list);
+                    }else{
+                        meshMap.put(mesh, list);
+                    }
+                }
+                list.add(item);
             }
-            list.add(item);
         }
+    }
+
+    /**
+     * Getter for property 'meshMap'.
+     *
+     * @return Value for property 'meshMap'.
+     */
+
+    public Map<Mesh, List<Item>> getMeshMap(){
+        return meshMap;
+    }
+
+
+    /**
+     * Setter for property 'meshMap'.
+     *
+     * @param meshMap Value to set for property 'meshMap'.
+     */
+
+    public void setMeshMap(Map<Mesh, List<Item>> meshMap){
+        this.meshMap = meshMap;
+    }
+
+    /**
+     * Getter for property 'instancedMeshMap'.
+     *
+     * @return Value for property 'instancedMeshMap'.
+     */
+
+    public Map<InstancedMesh, List<Item>> getInstancedMeshes(){
+        return instancedMeshMap;
+    }
+
+    /**
+     * Getter for property 'renderShadows'.
+     *
+     * @return Value for property 'renderShadows'.
+     */
+
+    public boolean isRenderShadows(){
+        return renderShadows;
+    }
+
+    /**
+     * Setter for property 'renderShadows'.
+     *
+     * @param renderShadows Value to set for property 'renderShadows'.
+     */
+
+    public void setRenderShadows(boolean renderShadows){
+        this.renderShadows = renderShadows;
     }
 
     /**
@@ -137,11 +211,41 @@ public class Scene{
     }
 
     /**
+     * Getter for property 'particleEmitters'.
+     *
+     * @return Value for property 'particleEmitters'.
+     */
+
+    public IParticleEmitter[] getParticleEmitters(){
+        return particleEmitters;
+    }
+
+    /**
+     * Setter for property 'particleEmitters'.
+     *
+     * @param particleEmitters Value to set for property 'particleEmitters'.
+     */
+
+    public void setParticleEmitters(IParticleEmitter[] particleEmitters){
+        this.particleEmitters = particleEmitters;
+    }
+
+    /**
      * Cleans up the meshes.
      */
 
     public void cleanup(){
-        meshMap.keySet().forEach(Mesh::cleanUp);
+        for(Mesh mesh : meshMap.keySet()){
+            mesh.cleanUp();
+        }
+        for(Mesh mesh : instancedMeshMap.keySet()){
+            mesh.cleanUp();
+        }
+        if(particleEmitters != null){
+            for(IParticleEmitter particleEmitter : particleEmitters){
+                particleEmitter.cleanup();
+            }
+        }
     }
 
 }

@@ -294,6 +294,7 @@ public class Window{
 
         public boolean showTriangles;
 
+        public boolean showFps;
     }
 
 }

@@ -14,17 +14,19 @@ public class Main{
         SharedLibraryLoader.load();
         String os = System.getProperty("os.name").toLowerCase();
         /* Mac OS X needs headless mode for AWT */
-        if (os.contains("mac")) {
+        if(os.contains("mac")){
             System.setProperty("java.awt.headless", "true");
         }
 
-        try {
+        try{
             boolean vSync = true;
             ILogic gameLogic = new DummyGame();
             Window.WindowOptions opts = new Window.WindowOptions();
+            opts.cullFace = true;
+            opts.showFps = true;
             Engine gameEng = new Engine("Game", 800, 800, vSync, opts, gameLogic);
             gameEng.start();
-        } catch (Exception excp) {
+        }catch(Exception excp){
             excp.printStackTrace();
             System.exit(-1);
         }

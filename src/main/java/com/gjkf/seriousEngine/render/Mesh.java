@@ -34,11 +34,11 @@ public class Mesh{
     /**
      * The ID of the VAO used.
      */
-    private final int vaoId;
+    protected final int vaoId;
     /**
      * The list of IDs used to render the object.
      */
-    private final List<Integer> vboIdList;
+    protected final List<Integer> vboIdList;
     /**
      * The number of vertices to draw.
      */
@@ -176,7 +176,7 @@ public class Mesh{
      * Initializes the rendering operations.
      */
 
-    private void initRender(){
+    protected void initRender(){
         Texture texture = material.getTexture();
         if(texture != null){
             // Activate first texture bank
@@ -206,7 +206,7 @@ public class Mesh{
      * <p>Restores the OpenGL state.</p>
      */
 
-    private void endRender(){
+    protected void endRender(){
         // Restore state
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -243,7 +243,7 @@ public class Mesh{
         initRender();
 
         for(Item item : items){
-            // Set up data requiered by item
+            // Set up data required by item
             consumer.accept(item);
             // Render this game item
             glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -290,13 +290,13 @@ public class Mesh{
         glDeleteVertexArrays(vaoId);
     }
 
-    private static float[] createEmptyFloatArray(int length, float defaultValue){
+    protected static float[] createEmptyFloatArray(int length, float defaultValue){
         float[] result = new float[length];
         Arrays.fill(result, defaultValue);
         return result;
     }
 
-    private static int[] createEmptyIntArray(int length, int defaultValue){
+    protected static int[] createEmptyIntArray(int length, int defaultValue){
         int[] result = new int[length];
         Arrays.fill(result, defaultValue);
         return result;
