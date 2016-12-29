@@ -1,6 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
 
-switch ( OperatingSystem.current() ) {
+switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
         break
@@ -12,14 +12,26 @@ switch ( OperatingSystem.current() ) {
         break
 }
 
-group 'com.gjkf'
+group 'io.github.gjkf'
 version '0.6'
+
+project.ext.group = 'io.github.gjkf'
+project.ext.artifactId = 'seriousEngine'
+project.ext.version = '0.6'
 
 apply plugin: 'java'
 apply plugin: 'application'
 
-sourceSets{
+sourceSets {
     main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
         java {
             srcDir 'src/test/java'
         }
@@ -29,11 +41,12 @@ sourceSets{
     }
 }
 
-project.ext.lwjglVersion = "3.1.0"
+project.ext.lwjglVersion = "3.1.1"
 mainClassName = "com.gjkf.seriousEngine.test.Main"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 task wrapper(type: Wrapper) {
@@ -51,16 +64,19 @@ dependencies {
     runtime "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
     runtime "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
     runtime "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-opengl:${lwjglVersion}:${lwjglNatives}"
     runtime "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
     // LWJGL dependencies END
-    compile "org.joml:joml:1.8.2"
+    compile "org.joml:joml:1.9.0"
     compile "org.l33tlabs.twl:pngdecoder:1.0"
 }
 
+//// BUILDING /////
+
 // add source jar
-task sourceJar(type: Jar) {
+task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'source'
+    classifier = 'sources'
 }
 
 // deobf jars
@@ -69,5 +85,11 @@ task deobfJar(type: Jar) {
     classifier = 'deobf'
 }
 
+// javadoc jars
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, deobfJar
+build.dependsOn sourcesJar, deobfJar, javadocJar
