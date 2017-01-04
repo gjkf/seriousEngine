@@ -5,6 +5,7 @@ package io.github.gjkf.seriousEngine.items;
 
 import io.github.gjkf.seriousEngine.render.Mesh;
 import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /**
@@ -176,13 +177,90 @@ public class Item{
         }
     }
 
+    /**
+     * Setter for property 'textPos'.
+     *
+     * @param textPos Value to set for property 'textPos'.
+     */
+
     public void setTextPos(int textPos){
         this.textPos = textPos;
     }
+
+    /**
+     * Getter for property 'textPos'.
+     *
+     * @return Value for property 'textPos'.
+     */
 
     public int getTextPos(){
         return textPos;
     }
 
+    /**
+     * Checks whether the given item collides with this one.
+     *
+     * @param item The item to check.
+     *
+     * @return TRUE if there's a collision, FALSE otherwise.
+     */
 
+    public boolean checkCollisionWith(Item item){
+        if(item.equals(this)){
+            return true;
+        }
+        boolean collidedX = false, collidedY = false, collidedZ = false;
+
+        Vector3f thisPosition = new Vector3f(
+                getPosition().x * getScale(),
+                getPosition().y * getScale(),
+                getPosition().z * getScale()
+        );
+
+        Vector3f itemPosition = new Vector3f(
+                item.getPosition().x * item.getScale(),
+                item.getPosition().y * item.getScale(),
+                item.getPosition().z * item.getScale()
+        );
+
+        Vector2f thisXBounds = new Vector2f(thisPosition.x - getScale(), thisPosition.x + getScale());
+        Vector2f thisYBounds = new Vector2f(thisPosition.y - getScale(), thisPosition.y + getScale());
+        Vector2f thisZBounds = new Vector2f(thisPosition.z - getScale(), thisPosition.z + getScale());
+
+        Vector2f itemXBounds = new Vector2f(itemPosition.x - item.getScale(), itemPosition.x + item.getScale());
+        Vector2f itemYBounds = new Vector2f(itemPosition.y - item.getScale(), itemPosition.y + item.getScale());
+        Vector2f itemZBounds = new Vector2f(itemPosition.z - item.getScale(), itemPosition.z + item.getScale());
+
+        if(itemPosition.x < thisPosition.x){
+            if(itemXBounds.y >= thisXBounds.x){
+                collidedX = true;
+            }
+        }else{
+            if(itemXBounds.x <= thisXBounds.y){
+                collidedX = true;
+            }
+        }
+
+        if(itemPosition.y < thisPosition.y){
+            if(itemYBounds.y >= thisYBounds.x){
+                collidedY = true;
+            }
+        }else{
+            if(itemYBounds.x <= thisYBounds.y){
+                collidedY = true;
+            }
+        }
+
+        if(itemPosition.z < thisPosition.z){
+            if(itemZBounds.y >= thisZBounds.x){
+                collidedZ = true;
+            }
+        }else{
+            if(itemZBounds.x <= thisZBounds.y){
+                collidedZ = true;
+            }
+        }
+
+        return collidedX && collidedY && collidedZ;
+    }
 }

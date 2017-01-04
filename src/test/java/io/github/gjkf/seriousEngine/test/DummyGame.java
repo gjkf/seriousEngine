@@ -13,8 +13,6 @@ import io.github.gjkf.seriousEngine.render.*;
 import io.github.gjkf.seriousEngine.render.lights.DirectionalLight;
 import io.github.gjkf.seriousEngine.render.lights.SceneLight;
 import io.github.gjkf.seriousEngine.render.particles.FlowParticleEmitter;
-import org.joml.Matrix3f;
-import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -44,6 +42,8 @@ public class DummyGame implements ILogic{
 
     private FlowParticleEmitter particleEmitter;
 
+    private Item block, block1;
+
     public DummyGame(){
         renderer = new Renderer();
         camera = new Camera();
@@ -59,20 +59,20 @@ public class DummyGame implements ILogic{
         scene = new Scene();
 
         float reflectance = 1.0f;
-        Mesh lander = OBJLoader.loadMesh("/engineModels/quad.obj");
-        lander.setMaterial(new Material(new Texture("/textures/lander0.png"), reflectance));
-        Item l = new Item(lander);
-        l.setPosition(0, 2, -5);
-        l.setRotation(new Quaternionf().setFromUnnormalized(new Matrix3f().rotateXYZ(0, 0, (float)Math.toRadians(180))));
-        l.setScale(2f);
+        Mesh cube = OBJLoader.loadMesh("/engineModels/cube.obj");
+        cube.setMaterial(new Material(new Texture("/textures/grassblock.png"), reflectance));
+        block = new Item(cube);
+//        block.setScale(0.5f);
+        block.setPosition(0, 0, -5);
+        block1 = new Item(cube);
+//        block1.setScale(0.5f);
+        block1.setPosition(-1, 0, -5);
+//        l.setScale(2f);
         scene.setItems(new Item[]{
-                l
+                block,block1
         });
 
         setupLights();
-
-//        camera.getPosition().y = 5f;
-//        camera.getRotation().x = 90;
 
         hud = new Hud("DEMO \\ s");
     }
@@ -112,18 +112,32 @@ public class DummyGame implements ILogic{
         }else if(window.isKeyPressed(GLFW_KEY_SPACE)){
             cameraInc.y = 1;
         }
-        if(window.isKeyPressed(GLFW_KEY_LEFT)){
+        if(window.isKeyPressed(GLFW_KEY_L)){
             angleInc -= 0.05f;
-        }else if(window.isKeyPressed(GLFW_KEY_RIGHT)){
+        }else if(window.isKeyPressed(GLFW_KEY_K)){
             angleInc += 0.05f;
-        }else{
-            angleInc = 0;
         }
+        if(window.isKeyPressed(GLFW_KEY_LEFT)){
+            block1.setPosition(block1.getPosition().x-0.02f, block1.getPosition().y, block1.getPosition().z);
+        }else if(window.isKeyPressed(GLFW_KEY_RIGHT)){
+            block1.setPosition(block1.getPosition().x+0.02f, block1.getPosition().y, block1.getPosition().z);
+        }
+        if(window.isKeyPressed(GLFW_KEY_UP)){
+            block1.setPosition(block1.getPosition().x, block1.getPosition().y+0.02f, block1.getPosition().z);
+        }else if(window.isKeyPressed(GLFW_KEY_DOWN)){
+            block1.setPosition(block1.getPosition().x, block1.getPosition().y-0.02f, block1.getPosition().z);
+        }
+        if(window.isKeyPressed(GLFW_KEY_X)){
+            block1.setPosition(block1.getPosition().x, block1.getPosition().y, block1.getPosition().z+0.02f);
+        }else if(window.isKeyPressed(GLFW_KEY_Z)){
+            block1.setPosition(block1.getPosition().x, block1.getPosition().y, block1.getPosition().z-0.02f);
+        }
+
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput){
-        System.out.println(camera.getPosition());
+        System.err.println(block.checkCollisionWith(block1));
         // Update camera based on mouse            
         if(mouseInput.isLeftButtonPressed()){
             Vector2f rotVec = mouseInput.getDisplVec();
