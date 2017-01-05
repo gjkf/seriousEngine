@@ -203,6 +203,18 @@ public class Window{
     }
 
     /**
+     * Returns TRUE if the given key is release.
+     *
+     * @param keyCode The key code.
+     *
+     * @return The key status.
+     */
+
+    public boolean isKeyReleased(int keyCode){
+        return glfwGetKey(windowHandle, keyCode) == GLFW_RELEASE;
+    }
+
+    /**
      * Whether or not the window should close.
      *
      * @return Whether or not the window should close.
