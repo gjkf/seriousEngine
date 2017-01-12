@@ -10,6 +10,8 @@ import io.github.gjkf.seriousEngine.render.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,58 @@ public class OBJLoader{
 
     public static Mesh loadMesh(String fileName) throws Exception{
         return loadMesh(fileName, 1);
+    }
+
+    public static Mesh loadMeshFromWorld(String path, int instances) throws Exception{
+        List<String> lines = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(new FileReader(path))){
+            String line;
+            while((line = br.readLine()) != null){
+                lines.add(line);
+            }
+        }
+
+        List<Vector3f> vertices = new ArrayList<>();
+        List<Vector2f> textures = new ArrayList<>();
+        List<Vector3f> normals = new ArrayList<>();
+        List<Face> faces = new ArrayList<>();
+
+        for(String line : lines){
+            String[] tokens = line.split("\\s+");
+            switch(tokens[0]){
+                case "v":
+                    // Geometric vertex
+                    Vector3f vec3f = new Vector3f(
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3]));
+                    vertices.add(vec3f);
+                    break;
+                case "vt":
+                    // Texture coordinate
+                    Vector2f vec2f = new Vector2f(
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]));
+                    textures.add(vec2f);
+                    break;
+                case "vn":
+                    // Vertex normal
+                    Vector3f vec3fNorm = new Vector3f(
+                            Float.parseFloat(tokens[1]),
+                            Float.parseFloat(tokens[2]),
+                            Float.parseFloat(tokens[3]));
+                    normals.add(vec3fNorm);
+                    break;
+                case "f":
+                    Face face = new Face(tokens[1], tokens[2], tokens[3]);
+                    faces.add(face);
+                    break;
+                default:
+                    // Ignore other lines
+                    break;
+            }
+        }
+        return reorderLists(vertices, textures, normals, faces, instances);
     }
 
     public static Mesh loadMesh(String fileName, int instances) throws Exception{

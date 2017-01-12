@@ -10,10 +10,7 @@ import io.github.gjkf.seriousEngine.render.lights.SceneLight;
 import io.github.gjkf.seriousEngine.render.particles.IParticleEmitter;
 import io.github.gjkf.seriousEngine.render.weather.Fog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class representing a typical scene.
@@ -30,6 +27,10 @@ public class Scene{
      * The map containing all the instanced meshes and the corresponding items.
      */
     private final Map<InstancedMesh, List<Item>> instancedMeshMap;
+    /**
+     * The items.
+     */
+    private List<Item> items;
     /**
      * The sky box.
      */
@@ -78,6 +79,7 @@ public class Scene{
      */
 
     public void setItems(Item[] items){
+        Collections.addAll(this.items, items);
         // Create a map of meshes to speed up rendering
         int numItems = items != null ? items.length : 0;
         for(int i = 0; i < numItems; i++){
@@ -235,6 +237,10 @@ public class Scene{
      */
 
     public void cleanup(){
+        for(Item item : items){
+            item.cleanup();
+        }
+
         for(Mesh mesh : meshMap.keySet()){
             mesh.cleanUp();
         }
