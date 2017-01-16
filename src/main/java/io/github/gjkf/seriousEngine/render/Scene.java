@@ -60,6 +60,7 @@ public class Scene{
         instancedMeshMap = new HashMap<>();
         fog = Fog.NOFOG;
         renderShadows = true;
+        items = new ArrayList<>();
     }
 
     /**

@@ -24,8 +24,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 /**
- * Class representing a mesh.
- * <p>A mesh is an object in the space represented by the vertex positions and a texture</p>
+ * Class representing a mesh. <p>A mesh is an object in the space represented by the vertex positions and a texture</p>
  * <p>You can load a <tt>Mesh</tt> either using {@link io.github.gjkf.seriousEngine.loaders.obj.OBJLoader#loadMesh(String)}
  * or {@link io.github.gjkf.seriousEngine.loaders.md5.MD5Loader#process(MD5Model, MD5AnimModel, Vector3f)}</p>
  */
@@ -44,6 +43,10 @@ public class Mesh{
      * The list of IDs used to render the object.
      */
     protected final List<Integer> vboIdList;
+    /**
+     * The array of the positions. Made accessible to help with collisions.
+     */
+    private float[] positions;
     /**
      * The number of vertices to draw.
      */
@@ -295,13 +298,23 @@ public class Mesh{
         glDeleteVertexArrays(vaoId);
     }
 
-    protected static float[] createEmptyFloatArray(int length, float defaultValue){
+    /**
+     * Getter for property 'positions'.
+     *
+     * @return Value for property 'positions'.
+     */
+
+    public float[] getPositions(){
+        return positions;
+    }
+
+    static float[] createEmptyFloatArray(int length, float defaultValue){
         float[] result = new float[length];
         Arrays.fill(result, defaultValue);
         return result;
     }
 
-    protected static int[] createEmptyIntArray(int length, int defaultValue){
+    static int[] createEmptyIntArray(int length, int defaultValue){
         int[] result = new int[length];
         Arrays.fill(result, defaultValue);
         return result;

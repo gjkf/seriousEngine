@@ -59,7 +59,7 @@ public class DummyGame implements ILogic{
         scene = new Scene();
 
         float reflectance = 1.0f;
-        Mesh cube = OBJLoader.loadMesh("/engineModels/cube.obj");
+        Mesh cube = OBJLoader.loadMesh("/models/test.obj");
         cube.setMaterial(new Material(new Texture("/textures/grassblock.png"), reflectance));
         block = new Item(cube);
 //        block.setScale(0.5f);
